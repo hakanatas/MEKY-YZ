@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gençler YZ Öğreniyor — Kaydırarak Keşfet</title>
+<meta name="description" content="Minik Eller Kod Yazıyor projesinin yeni dönemi: Gençler YZ Öğreniyor. Ortaokul öğrencileri için yapay zekâ okuryazarlığı, güvenli kullanım, prompt yazma, doğrulama, yaratıcılık ve etik — interaktif Türkçe sunum.">
+<meta name="theme-color" content="#12131f">
+<meta property="og:title" content="Gençler YZ Öğreniyor">
+<meta property="og:description" content="Minik Eller Kod Yazıyor'dan Gençler YZ Öğreniyor'a: ortaokul için interaktif yapay zekâ eğitim programı.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312131f'/%3E%3Ccircle cx='20' cy='22' r='7' fill='%23ffcf4a'/%3E%3Ccircle cx='44' cy='22' r='7' fill='%237fe0c8'/%3E%3Ccircle cx='32' cy='44' r='7' fill='%23ff8a65'/%3E%3Cpath d='M20 22 L44 22 L32 44 Z' fill='none' stroke='%23f3f1ea' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#12131f; --fg:#f3f1ea; --accent:#ffcf4a; --accent2:#7fe0c8;
+  --dim:rgba(243,241,234,.62); --card:rgba(14,15,26,.66); --line:rgba(243,241,234,.16);
+  --ok:#5fd68a; --warn:#ffcf4a; --bad:#ff6b5a;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  transition:background-color 1s var(--ease),color 1s var(--ease);
+  overflow-x:hidden;
+}
+h1,h2,h3,.display{font-family:"Syne","DM Sans",sans-serif;font-weight:800;letter-spacing:-.025em;line-height:1;margin:0}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+::selection{background:var(--accent);color:#12131f}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+button{font-family:inherit}
+
+/* ---------- fixed chrome ---------- */
+#bar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:95;transition:background-color .9s var(--ease)}
+#tag{
+  position:fixed;top:16px;left:clamp(12px,3vw,34px);z-index:95;
+  background:var(--card);border:1px solid var(--line);border-radius:99px;padding:7px 15px;backdrop-filter:blur(10px);
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  display:flex;gap:10px;align-items:center;pointer-events:none;transition:color .9s var(--ease)
+}
+#tag b{color:var(--accent);font-family:"JetBrains Mono",monospace;font-weight:700}
+#tag .ln{width:26px;height:1px;background:currentColor;opacity:.4}
+#brand{position:fixed;top:16px;right:clamp(12px,3vw,34px);z-index:95;font-family:"Syne",sans-serif;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);pointer-events:none;display:flex;gap:8px;align-items:center}
+#brand i{width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block}
+#dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:95;display:flex;flex-direction:column;gap:9px}
+#dots button{all:unset;cursor:pointer;width:8px;height:8px;border-radius:50%;background:transparent;border:1.5px solid var(--dim);transition:.35s var(--ease);position:relative}
+#dots button[aria-current="true"]{background:var(--accent);border-color:var(--accent);transform:scale(1.45)}
+#dots button::after{
+  content:attr(data-label);position:absolute;right:19px;top:50%;transform:translateY(-50%) translateX(6px);
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;color:var(--fg);
+  background:var(--card);padding:4px 10px;border-radius:20px;opacity:0;pointer-events:none;
+  transition:.3s var(--ease);backdrop-filter:blur(8px);border:1px solid var(--line)
+}
+#dots button:hover::after{opacity:1;transform:translateY(-50%) translateX(0)}
+#hint{position:fixed;left:0;right:0;bottom:20px;text-align:center;z-index:90;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);transition:opacity .5s;pointer-events:none}
+#hint i{display:block;margin:9px auto 0;width:18px;height:18px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);animation:bob 1.9s infinite}
+@keyframes bob{0%,100%{transform:rotate(45deg) translate(0,0);opacity:.35}50%{transform:rotate(45deg) translate(4px,4px);opacity:1}}
+
+/* ---------- chapter shell ---------- */
+.chapter{position:relative}
+.stage{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;display:grid;place-items:center}
+.stage::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle at 1px 1px,currentColor 1px,transparent 0);
+  background-size:30px 30px;opacity:.055
+}
+.stage::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(255,255,255,.07),transparent 70%)
+}
+.stage>*{position:relative;z-index:1}
+.wm{
+  position:absolute;font-family:"Syne",sans-serif;font-weight:800;font-size:min(46vh,42vw);line-height:.8;
+  color:currentColor;opacity:.045;right:2vw;bottom:-2vh;pointer-events:none;z-index:0;letter-spacing:-.05em
+}
+.tool{width:min(620px,94vw);pointer-events:auto;padding:0 clamp(12px,3vw,28px)}
+@media(min-width:861px){
+  .stage.pl{justify-items:start;padding-left:clamp(18px,3vw,64px)}
+  .stage.pr{justify-items:end;padding-right:clamp(18px,3vw,64px)}
+}
+@media(min-width:861px) and (max-width:1180px){
+  .stage.pl>.tool,.stage.pr>.tool{width:min(48vw,600px)}
+  .steps .step .card{max-width:min(500px,44vw)}
+}
+.steps{position:relative;z-index:5;margin-top:-100vh;pointer-events:none}
+.step{min-height:100vh;display:flex;align-items:center;padding:0 clamp(18px,6vw,104px)}
+.step .card{
+  pointer-events:auto;max-width:500px;background:var(--card);backdrop-filter:blur(12px);
+  border:1px solid var(--line);border-radius:22px;padding:26px 28px;
+  opacity:0;transform:translateY(26px);
+  transition:opacity .75s var(--ease),transform .75s var(--ease);
+  box-shadow:0 26px 70px rgba(0,0,0,.3)
+}
+.step.on .card{opacity:1;transform:none}
+.step.right{justify-content:flex-end}
+.step.center{justify-content:center;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin:0 0 13px;font-weight:700}
+.card h2{font-size:clamp(27px,3.9vw,42px);margin:0 0 14px}
+.card h3{font-size:clamp(19px,2.5vw,26px);margin:0 0 12px}
+.card p{margin:0 0 12px;color:color-mix(in srgb,var(--fg) 86%,transparent)}
+.card p:last-child{margin-bottom:0}
+.card b{color:var(--accent);font-weight:700}
+.card .note{font-size:14px;color:var(--dim);border-left:2px solid var(--line);padding-left:13px;margin-top:16px}
+.card ul{margin:0 0 12px;padding-left:20px;color:color-mix(in srgb,var(--fg) 86%,transparent)}
+.card li{margin-bottom:5px}
+
+/* ---------- stat / fin ---------- */
+.fin{min-height:100vh;display:grid;place-items:center;padding:100px clamp(18px,6vw,80px);position:relative;overflow:hidden}
+.finwrap{width:min(1000px,100%)}
+.stat{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:70px clamp(20px,8vw,140px);position:relative;overflow:hidden}
+.stat .big{font-size:clamp(64px,16vw,220px);line-height:1;margin-top:6px;color:var(--accent);letter-spacing:-.045em}
+.stat .cap{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(16px,2.4vw,28px);line-height:1.2;max-width:26ch;margin:24px auto 0}
+.stat .sub{color:var(--dim);font-size:15px;margin:20px auto 0;max-width:56ch}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.on{opacity:1;transform:none}
+
+/* ---------- hero ---------- */
+#hero{height:100vh;position:relative;display:grid;place-items:center;overflow:hidden;background:#12131f}
+#hero .wrap{position:relative;z-index:3;text-align:center;padding:0 22px}
+#hero .pre{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(243,241,234,.5);margin:0 0 20px;opacity:0;animation:up .9s .05s var(--ease) forwards}
+#hero .pre s{text-decoration:line-through;opacity:.6}
+#hero h1{font-size:clamp(44px,10.5vw,150px);line-height:.88}
+#hero h1 span{display:block;opacity:0;transform:translateY(28px);animation:up .95s var(--ease) forwards}
+#hero h1 span:nth-child(1){animation-delay:.15s}
+#hero h1 span:nth-child(2){animation-delay:.27s;color:var(--accent)}
+#hero h1 span:nth-child(3){animation-delay:.39s}
+@keyframes up{to{opacity:1;transform:none}}
+#hero .tag{margin:26px auto 0;max-width:48ch;color:var(--dim);font-size:clamp(14px,1.55vw,18px);opacity:0;animation:up .95s .56s var(--ease) forwards}
+#hero .meta{margin-top:24px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(243,241,234,.36);opacity:0;animation:up .95s .7s var(--ease) forwards}
+#net{position:absolute;inset:0;z-index:1;opacity:.7}
+
+/* ---------- ui bits ---------- */
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:99px;border:1.5px solid var(--accent);color:var(--accent);font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;transition:.25s var(--ease);user-select:none}
+.btn:hover{background:var(--accent);color:#12131f}
+.btn.solid{background:var(--accent);color:#12131f}
+.btn.solid:hover{filter:brightness(1.13)}
+.btn.sm{padding:7px 13px;font-size:11px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:disabled:hover{background:transparent;color:var(--accent)}
+.btn.solid:disabled:hover{background:var(--accent);color:#12131f}
+.field{width:100%;background:rgba(0,0,0,.26);border:1px solid var(--line);color:var(--fg);border-radius:13px;padding:13px 15px;font-family:inherit;font-size:15.5px;outline:none;transition:border-color .25s}
+.field:focus{border-color:var(--accent)}
+.light .field{background:rgba(0,0,0,.05)}
+textarea.field{resize:vertical;min-height:120px;line-height:1.55}
+select.field{appearance:none;-webkit-appearance:none;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.lbl{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin:0 0 11px}
+.small{font-size:13.5px;color:var(--dim)}
+.kbd{font-family:"JetBrains Mono",monospace;background:color-mix(in srgb,var(--fg) 12%,transparent);padding:2px 6px;border-radius:5px;font-size:.88em}
+.panel{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:18px;padding:20px}
+.light .panel{background:rgba(255,255,255,.45)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{all:unset;cursor:pointer;padding:7px 13px;border-radius:99px;border:1.5px solid var(--line);font-size:13.5px;font-weight:500;transition:.22s var(--ease);user-select:none;line-height:1.3}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);color:#12131f;border-color:var(--accent);font-weight:700}
+.meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--fg) 12%,transparent);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .6s var(--ease),background-color .4s}
+.pill{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+.pill.ok{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 20%,transparent);color:var(--bad)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 22%,transparent);color:var(--warn)}
+.light .pill.ok{color:#1e6a3a}.light .pill.bad{color:#9c2b1a}.light .pill.warn{color:#7a5a00}
+.fb{margin-top:12px;font-size:14px;line-height:1.5;min-height:22px;transition:.3s}
+.score{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--accent)}
+
+/* ---------- 01 dönüşüm: flip cards ---------- */
+.flip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.flip{perspective:900px;height:64px}
+.flip>div{position:relative;width:100%;height:100%;transition:transform .7s var(--ease);transform-style:preserve-3d}
+.flip.on>div{transform:rotateX(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;padding:8px 12px;font-size:12.5px;line-height:1.25;font-weight:500;border:1px solid var(--line)}
+.flip .f{background:color-mix(in srgb,var(--fg) 8%,transparent);color:var(--dim)}
+.flip .b{background:var(--accent);color:#12131f;transform:rotateX(180deg);font-weight:700}
+.flip .b .new{position:absolute;top:-7px;right:8px;font-size:9px;letter-spacing:.12em;background:var(--accent2);color:#12131f;padding:2px 7px;border-radius:99px;font-weight:800}
+.flip.extra .f{border-style:dashed;opacity:.5;font-style:italic}
+.flip.extra .b{background:var(--accent2)}
+
+/* ---------- 02 quiz ---------- */
+.qz{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qz .it{background:color-mix(in srgb,var(--fg) 7%,transparent);border:1px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;flex-direction:column;gap:8px}
+.qz .it .t{font-size:14px;font-weight:500;line-height:1.3;display:flex;gap:8px;align-items:center}
+.qz .it .t span{font-size:20px}
+.qz .it .bs{display:flex;gap:6px}
+.qz .it .bs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:6px 0;border-radius:8px;border:1px solid var(--line);font-size:12px;font-weight:700;transition:.2s}
+.qz .it .bs button:hover{border-color:var(--accent)}
+.qz .it.ok{border-color:var(--ok)}
+.qz .it.bad{border-color:var(--bad)}
+.qz .it .why{font-size:12px;color:var(--dim);line-height:1.35;display:none}
+.qz .it.done .why{display:block}
+.qz .it.done .bs{display:none}
+
+/* ---------- 03 learn canvas ---------- */
+#learnCv{width:100%;height:auto;aspect-ratio:3/2;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.28);cursor:crosshair;display:block;touch-action:none}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:99px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;font-size:13px;font-weight:600;transition:.2s}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#12131f}
+
+/* ---------- 05 safety cards ---------- */
+.deck{position:relative;min-height:190px}
+.deck .sc{position:absolute;inset:0;background:color-mix(in srgb,var(--fg) 9%,transparent);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px;transition:.45s var(--ease);opacity:0;transform:translateX(40px) rotate(3deg);pointer-events:none}
+.deck .sc.on{opacity:1;transform:none;pointer-events:auto}
+.deck .sc.out{opacity:0;transform:translateX(-60px) rotate(-4deg)}
+.deck .sc .ico{font-size:40px;line-height:1}
+.deck .sc .t{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(18px,2.4vw,24px)}
+.deck .sc .ctx{font-size:13.5px;color:var(--dim)}
+
+/* ---------- 06 claims ---------- */
+.claim{cursor:pointer;border-bottom:2px dashed var(--accent);padding:0 2px;border-radius:3px;transition:.2s;position:relative}
+.claim:hover{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.claim[data-mark="ok"]{background:color-mix(in srgb,var(--ok) 25%,transparent);border-bottom-color:var(--ok)}
+.claim[data-mark="sus"]{background:color-mix(in srgb,var(--bad) 25%,transparent);border-bottom-color:var(--bad)}
+.claim.rev-hit{outline:2px solid var(--ok);outline-offset:2px}
+.claim.rev-miss{outline:2px solid var(--bad);outline-offset:2px;text-decoration:line-through}
+.aiBox{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:16px;padding:16px 18px;font-size:15px;line-height:1.75}
+.aiBox .who{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.aiBox .who i{width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- 07 story ---------- */
+.sel-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.story{font-size:15.5px;line-height:1.7;min-height:130px;white-space:pre-wrap}
+.story em{color:var(--accent);font-style:normal;font-weight:700}
+
+/* ---------- 08 chatbot ---------- */
+.rules{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:130px;overflow:auto}
+.rule{display:grid;grid-template-columns:1fr auto 1.4fr auto;gap:8px;align-items:center;font-size:13px;background:color-mix(in srgb,var(--fg) 7%,transparent);border:1px solid var(--line);border-radius:10px;padding:7px 10px}
+.rule .k{font-family:"JetBrains Mono",monospace;color:var(--accent);font-weight:700}
+.rule .x{all:unset;cursor:pointer;opacity:.5;padding:0 4px}
+.rule .x:hover{opacity:1;color:var(--bad)}
+.chat{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:16px;padding:12px;height:170px;overflow:auto;display:flex;flex-direction:column;gap:7px}
+.msg{max-width:82%;padding:7px 12px;border-radius:14px;font-size:14px;line-height:1.4}
+.msg.u{align-self:flex-end;background:var(--accent);color:#12131f;border-bottom-right-radius:4px}
+.msg.b{align-self:flex-start;background:color-mix(in srgb,var(--fg) 12%,transparent);border-bottom-left-radius:4px}
+.msg.b small{display:block;font-size:10.5px;opacity:.6;margin-top:2px;font-family:"JetBrains Mono",monospace}
+
+/* ---------- 09 dilemmas ---------- */
+.dil .q{font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(17px,2.2vw,22px);margin:6px 0 12px;line-height:1.2}
+.dil .opt{all:unset;cursor:pointer;display:block;width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:7px;font-size:14px;line-height:1.4;transition:.22s}
+.dil .opt:hover{border-color:var(--accent)}
+.dil .opt.pick.g{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.dil .opt.pick.y{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.dil .opt.pick.r{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.dil .opt.dim{opacity:.45}
+
+/* ---------- 10 traffic light ---------- */
+.tl{display:flex;gap:16px;align-items:center}
+.lamp{width:66px;background:rgba(0,0,0,.45);border-radius:40px;padding:10px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;border:1px solid var(--line)}
+.lamp i{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.08);display:block;transition:.35s}
+.lamp.r i:nth-child(1){background:var(--bad);box-shadow:0 0 22px var(--bad)}
+.lamp.y i:nth-child(2){background:var(--warn);box-shadow:0 0 22px var(--warn)}
+.lamp.g i:nth-child(3){background:var(--ok);box-shadow:0 0 22px var(--ok)}
+
+/* ---------- 11 collab ---------- */
+.task{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.task:last-child{border-bottom:0}
+.task .seg button{padding:5px 10px;font-size:12px}
+.task.hit .seg{border-color:var(--ok)}
+.task.miss .seg{border-color:var(--bad)}
+.task .why{grid-column:1/-1;font-size:12.5px;color:var(--dim);display:none;line-height:1.4}
+.task.rev .why{display:block}
+
+/* ---------- 12 program ---------- */
+.prog{width:min(1040px,100%)}
+.mod{border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden;background:var(--card);backdrop-filter:blur(8px)}
+.mod summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:16px 20px;font-weight:700;font-size:16px}
+.mod summary::-webkit-details-marker{display:none}
+.mod summary .n{font-family:"JetBrains Mono",monospace;color:var(--accent);font-size:13px}
+.mod summary .ar{width:10px;height:10px;border-right:2px solid var(--dim);border-bottom:2px solid var(--dim);transform:rotate(45deg);transition:.3s}
+.mod[open] summary .ar{transform:rotate(-135deg)}
+.mod .bd{padding:0 20px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;font-size:14px}
+.mod .bd h4{margin:0 0 6px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.mod .bd p{margin:0;color:var(--dim);line-height:1.5}
+.mod .tagnew{font-size:10px;letter-spacing:.12em;background:var(--accent2);color:#12131f;padding:2px 8px;border-radius:99px;font-weight:800;margin-left:8px;vertical-align:middle}
+.addgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px}
+.add{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;backdrop-filter:blur(8px)}
+.add .ic{font-size:26px;margin-bottom:8px}
+.add h4{font-family:"Syne",sans-serif;font-weight:800;font-size:16px;margin:0 0 6px;line-height:1.2}
+.add p{margin:0;font-size:13.5px;color:var(--dim);line-height:1.5}
+.add .lv{display:inline-block;margin-top:10px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+
+/* ---------- 13 pledge ---------- */
+.pledge{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px;backdrop-filter:blur(10px);text-align:left}
+.pledge li{margin-bottom:8px;color:color-mix(in srgb,var(--fg) 86%,transparent)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+
+footer{padding:88px clamp(20px,8vw,140px) 66px;border-top:1px solid rgba(243,241,234,.14);background:#12131f;color:#f3f1ea}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:34px;max-width:1120px;margin:0 auto}
+footer h4{font-family:"Syne",sans-serif;font-weight:800;text-transform:uppercase;font-size:12.5px;letter-spacing:.1em;margin:0 0 12px;color:#ffcf4a}
+footer p,footer li{font-size:14px;color:rgba(243,241,234,.6);margin:0 0 8px}
+footer ul{list-style:none;padding:0;margin:0}
+footer a{color:inherit;text-decoration:none;border-bottom:1px solid rgba(243,241,234,.2);cursor:pointer}
+footer a:hover{color:#ffcf4a}
+
+@media (max-width:860px){
+  body{font-size:16px}
+  .stage{position:relative;height:auto;min-height:0;display:block;padding:78px 0 10px}
+  .stage::after{display:none}
+  .tool{margin:0 auto}
+  .steps{margin-top:0}
+  .m-hide{display:none}
+  .tool{width:100%;padding:0 12px}
+  .lbl{font-size:10px;margin-bottom:8px}
+  .small{font-size:12.5px}
+  .panel{padding:14px 16px}
+  .field{font-size:14px;padding:10px 12px}
+  .btn{font-size:11px;padding:8px 14px}
+  .flip{height:56px}
+  .flip .f,.flip .b{font-size:11px;padding:6px 9px}
+  .qz .it .t{font-size:13px}
+  .chat{height:130px}
+  .rules{max-height:90px}
+  .step{padding:8px 14px;min-height:0;align-items:flex-start;justify-content:center !important}
+  .step:last-child{padding-bottom:70px}
+  .step .card{max-width:none;width:100%;padding:20px 20px;border-radius:18px;opacity:1;transform:none}
+  .card h2{font-size:clamp(24px,7.4vw,32px)}
+  .card h3{font-size:clamp(18px,5.6vw,24px)}
+  .card p,.card li{font-size:15px}
+  .card .note{font-size:13px}
+  #dots{display:none}
+  #brand{display:none}
+  .wm{display:none}
+  #tag{top:10px;padding:5px 12px;font-size:10px}
+  .fin{padding:70px 16px}
+  .stat{padding:80px 18px}
+  .mod summary{padding:13px 14px;font-size:14px}
+  .mod .bd{padding:0 14px 14px}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="tag"><b id="tagNum">00</b><span class="ln"></span><span id="tagName">Başla</span></div>
+<div id="brand"><i></i>Gençler YZ Öğreniyor</div>
+<nav id="dots" aria-label="Bölümler"></nav>
+<div id="hint">Aşağı kaydır<i></i></div>
+<canvas id="confetti"></canvas>
+
+<!-- ============ HERO ============ -->
+<header id="hero" data-ch data-num="00" data-label="Başla" data-bg="#12131f" data-fg="#f3f1ea" data-accent="#ffcf4a" data-accent2="#7fe0c8">
+  <canvas id="net"></canvas>
+  <div class="wrap">
+    <p class="pre"><s>Minik Eller Kod Yazıyor</s> &nbsp;→&nbsp; 2027 ve sonrası</p>
+    <h1><span>Gençler</span><span>Yapay Zekâ</span><span>Öğreniyor</span></h1>
+    <p class="tag">Yedi yıl boyunca kod yazan minik eller büyüdü. Şimdi sıra, yapay zekâyı <b>anlayan, sorgulayan ve sorumlulukla kullanan</b> bir nesilde. Kaydır — programın her başlığını kendin dene.</p>
+    <p class="meta">Ortaokul · 5–8. sınıf · 13 bölüm · ~15 dakika</p>
+  </div>
+</header>
+
+<!-- ============ 01 · DÖNÜŞÜM ============ -->
+<section class="chapter" data-ch data-num="01" data-label="Dönüşüm" data-bg="#1e2a4a" data-fg="#eef2ff" data-accent="#ffcf4a" data-accent2="#7fe0c8">
+  <div class="stage pl">
+    <div class="tool">
+      <p class="lbl">Kaydırıcıyı sürükle — 2019'dan 2027'ye</p>
+      <input type="range" id="morph" min="0" max="100" value="0" aria-label="Yıl">
+      <div class="row" style="justify-content:space-between;margin-top:4px">
+        <span class="mono small">2019–2026 · Kodlama Odaklı</span>
+        <span class="mono small" id="morphYear" style="color:var(--accent);font-weight:700">2019</span>
+        <span class="mono small">2027+ · Yapay Zekâ Odaklı</span>
+      </div>
+      <div class="flip-grid" id="flipGrid"></div>
+      <p class="small" id="morphCap" style="margin:14px 0 0;min-height:20px"></p>
+    </div>
+    <div class="wm">01</div>
+  </div>
+  <div class="steps">
+    <div class="step right"><div class="card">
+      <p class="eyebrow">Bölüm 01 — Dönüşüm</p>
+      <h2>Kodlamadan yapay zekâya</h2>
+      <p>2019'da başlayan <b>Minik Eller Kod Yazıyor</b>, çocuklara Scratch ile algoritmik düşünmeyi, oyunlaştırmayı ve problem çözmeyi öğretti.</p>
+      <p>2027'den itibaren proje yeni bir ada ve yeni bir odağa geçiyor: <b>Gençler YZ Öğreniyor</b>. Kaydırıcıyı sürükle — eski başlıkların yeni karşılıklarına nasıl dönüştüğünü izle.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Hiçbir şey çöpe gitmiyor</h3>
+      <p>Her eski başlığın bir devamı var: <b>algoritmik düşünme</b>, yapay zekânın cevabını sorgulama becerisine; <b>hikâyeleştirme</b>, yapay zekâ ile yaratıcı üretime dönüşüyor.</p>
+      <p>Kodlama ise kaybolmuyor — <b>YZ + Kodlama Entegrasyonu</b> başlığıyla programın içinde yaşamaya devam ediyor.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>İki yeni başlık</h3>
+      <p>Kesikli kutulardan çıkan iki başlık eski programda karşılığı olmayan, tamamen yeni alanlar: <b>Yaşa Uygun ve Güvenli Kullanım</b> ile <b>Etik ve Sorumluluk</b>.</p>
+      <p class="note">Bu ikisi ortaokul için "olsa iyi olur" değil, "olmazsa olmaz". Nedenini birazdan göreceksin.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 02 · OKURYAZARLIK ============ -->
+<section class="chapter" data-ch data-num="02" data-label="Okuryazarlık" data-bg="#f2e9d6" data-fg="#1f1d1a" data-accent="#b3412a" data-accent2="#1e6a5a" data-light="1">
+  <div class="stage pr">
+    <div class="tool">
+      <p class="lbl">Yapay zekâ mı, değil mi? — Tahmin et</p>
+      <div class="qz" id="quiz"></div>
+      <div class="row" style="justify-content:space-between;margin-top:12px">
+        <span class="score" id="quizScore">0 / 8 doğru</span>
+        <button class="btn sm" id="quizReset">Baştan</button>
+      </div>
+    </div>
+    <div class="wm">02</div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="card">
+      <p class="eyebrow">Bölüm 02 — Yapay Zekâ Okuryazarlığı</p>
+      <h2>Önce tanımayı öğren</h2>
+      <p>Yapay zekâ okuryazarlığı, kod yazmak değil; etrafındaki hangi şeyin yapay zekâ olduğunu, ne yapabildiğini ve <b>ne yapamadığını</b> bilmek demek.</p>
+      <p>Sağdaki kutulara bak: hangi cihaz veya uygulama "öğrenerek" çalışıyor, hangisi sadece önceden yazılmış kurallara uyuyor? Tahminini yap, cevabı gör.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Kural mı, örüntü mü?</h3>
+      <p>Bir çalar saat <b>kural</b> ile çalışır: "07:00 olunca çal." Yüz tanıma ise <b>örüntü</b> ile çalışır: binlerce yüz örneğinden "bu yüz kime benziyor?" sorusunu öğrenmiştir.</p>
+      <p>Yapay zekânın ayırt edici özelliği bu: davranışı tek tek kurallardan değil, <b>verideki örüntülerden</b> gelir.</p>
+      <p class="note">Ortaokul için hedef kazanım: "Günlük hayattaki yapay zekâ uygulamalarını tanır, kural tabanlı sistemlerden ayırt eder."</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 03 · NASIL ÇALIŞIR ============ -->
+<section class="chapter" data-ch data-num="03" data-label="Nasıl Çalışır?" data-bg="#16332e" data-fg="#e9f5ef" data-accent="#7fe0c8" data-accent2="#ffb347">
+  <div class="stage pl">
+    <div class="tool">
+      <p class="lbl">Makineye öğret — tıklayarak örnek ver</p>
+      <div class="row" style="justify-content:space-between;margin-bottom:10px">
+        <div class="seg" id="learnCls">
+          <button aria-pressed="true" data-c="0">🐈 Kedi</button>
+          <button aria-pressed="false" data-c="1">🐶 Köpek</button>
+        </div>
+        <div class="row">
+          <button class="btn sm" id="learnDemo">Örnek yükle</button>
+          <button class="btn sm" id="learnClear">Temizle</button>
+        </div>
+      </div>
+      <canvas id="learnCv" width="600" height="400" aria-label="Öğrenme alanı"></canvas>
+      <div class="row" style="justify-content:space-between;margin-top:12px">
+        <span class="score" id="learnStat">0 örnek</span>
+        <button class="btn solid sm" id="learnBtn">Öğren ▶</button>
+      </div>
+      <p class="small" id="learnCap" style="margin:10px 0 0;min-height:20px">Alana tıkla: kedi ya da köpek örnekleri yerleştir. Sonra "Öğren"e bas.</p>
+    </div>
+    <div class="wm">03</div>
+  </div>
+  <div class="steps">
+    <div class="step right"><div class="card">
+      <p class="eyebrow">Bölüm 03 — Yapay Zekâ Nasıl Çalışır?</p>
+      <h2>Örneklerden öğrenir</h2>
+      <p>Yapay zekâya "kedi böyledir" diye kural yazmazsın. Ona <b>binlerce örnek</b> gösterirsin; o da örneklerin arasında bir sınır çizmeyi öğrenir.</p>
+      <p>Soldaki alanda bunu kendin yap: birkaç kedi, birkaç köpek örneği koy, <b>Öğren</b>'e bas. Makinenin çizdiği "karar haritasını" gör.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Az örnek, kaba karar</h3>
+      <p>Sadece 3–4 örnekle harita kaba ve hatalı olur. Örnek sayısını artırdıkça sınır incelir. İşte "<b>veri</b>" kelimesinin bu kadar önemli olmasının nedeni.</p>
+      <p>Bir de şunu dene: tüm kedileri sol üst köşeye, tüm köpekleri sağ alt köşeye koy. Makine <b>"konum" öğrenir</b>, "kedi" değil. Buna <b>yanlılık</b> denir — 9. bölümde geri döneceğiz.</p>
+      <p class="note">Bu başlık orijinal tabloda yoktu. Ortaokul için "nasıl çalışır?" sorusuna basit bir cevap vermeden okuryazarlık kurulamıyor; o yüzden programa eklenmesini öneriyoruz.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 04 · PROMPT ============ -->
+<section class="chapter" data-ch data-num="04" data-label="Prompt" data-bg="#3b2a58" data-fg="#f4eefb" data-accent="#ffcf4a" data-accent2="#7fe0c8">
+  <div class="stage pr">
+    <div class="tool">
+      <p class="lbl">Prompt atölyesi — parçaları seç, isteğin güçlensin</p>
+      <input class="field" id="pTopic" value="okulda geri dönüşüm" maxlength="60" aria-label="Konu" placeholder="Konu yaz…">
+      <div id="pGroups" style="margin-top:12px;display:grid;gap:9px"></div>
+      <p class="lbl" style="margin:14px 0 6px">Oluşan prompt</p>
+      <div class="panel" style="padding:14px 16px;font-size:14.5px;line-height:1.6;min-height:60px" id="pOut"></div>
+      <div class="row" style="justify-content:space-between;margin-top:10px;gap:14px">
+        <div style="flex:1"><div class="meter"><i id="pMeter"></i></div></div>
+        <span class="score" id="pScore">Güç: 0 / 5</span>
+      </div>
+    </div>
+    <div class="wm">04</div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="card">
+      <p class="eyebrow">Bölüm 04 — Prompt Geliştirme</p>
+      <h2>İyi soru, iyi cevap</h2>
+      <p>Yapay zekâya yazdığın isteğe <b>prompt</b> denir. "Bana bir şey yaz" dersen sıradan bir şey alırsın. Ne istediğini tarif edersen işe yarar bir şey alırsın.</p>
+      <p>Sağda parçaları seçerek promptu adım adım güçlendir. Ölçeğin dolduğunu izle.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Beş parçalı tarif</h3>
+      <ul>
+        <li><b>Rol:</b> Yapay zekâ kim olsun? ("Fen öğretmeni gibi…")</li>
+        <li><b>Görev:</b> Tam olarak ne yapsın?</li>
+        <li><b>Bağlam:</b> Kim için, hangi durumda?</li>
+        <li><b>Format:</b> Liste mi, tablo mu, üç cümle mi?</li>
+        <li><b>Kısıt:</b> Uzunluk, dil, yapmaması gerekenler.</li>
+      </ul>
+      <p class="note">Ortaokul için yalın kural: "Kime, ne, nasıl, ne kadar?" — dördünü de yazan öğrenci iyi prompt yazıyordur.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Konuşarak ilerle</h3>
+      <p>İlk cevap mükemmel olmak zorunda değil. "Daha kısa yap", "bir örnek ekle", "8. sınıf seviyesinde anlat" gibi <b>takip istekleri</b>, prompt yazmanın ikinci yarısıdır.</p>
+      <p>Bu yüzden atölyede öğrenciler tek prompt değil, <b>üç turluk sohbet</b> planlar.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ STAT · 13+ ============ -->
+<section class="stat chapter" data-ch data-num="—" data-label="Yaş sınırı" data-bg="#0f0e14" data-fg="#f3f1ea" data-accent="#ff6b5a" data-accent2="#ffcf4a">
+  <div>
+    <p class="lbl reveal">Çoğu yapay zekâ sohbet aracının kullanım şartlarındaki alt yaş</p>
+    <div class="big display reveal">13+</div>
+    <p class="cap reveal">Ortaokulun ilk iki sınıfı bu sınırın altında.</p>
+    <p class="sub reveal">Yaygın araçlar genellikle 13 yaş altını kabul etmez; 13–18 arasında ise veli izni ister. Bu, "yaşa uygun kullanım" başlığının neden programın omurgası olduğunu açıklıyor: 5–6. sınıfta öğretmen hesabından, denetimli ve sınıf içinde; 7–8. sınıfta veli onayıyla ve kurallı.</p>
+  </div>
+</section>
+
+<!-- ============ 05 · GÜVENLİ KULLANIM ============ -->
+<section class="chapter" data-ch data-num="05" data-label="Güvenli Kullanım" data-bg="#8c2f2a" data-fg="#fbe9e3" data-accent="#ffd166" data-accent2="#ffe8d6">
+  <div class="stage pl">
+    <div class="tool">
+      <p class="lbl">Paylaşır mısın? — Bir yapay zekâ sohbetinde…</p>
+      <div class="deck" id="deck"></div>
+      <div class="row" style="justify-content:center;gap:12px;margin-top:14px">
+        <button class="btn" id="dkNo">🚫 Paylaşmam</button>
+        <button class="btn solid" id="dkYes">✅ Paylaşabilirim</button>
+      </div>
+      <div class="fb" id="dkFb" style="text-align:center"></div>
+      <div class="row" style="justify-content:space-between;margin-top:8px">
+        <span class="score" id="dkScore">0 / 8</span>
+        <button class="btn sm" id="dkReset">Baştan</button>
+      </div>
+    </div>
+    <div class="wm">05</div>
+  </div>
+  <div class="steps">
+    <div class="step right"><div class="card">
+      <p class="eyebrow">Bölüm 05 — Yaşa Uygun ve Güvenli Kullanım</p>
+      <h2>Sohbet kutusu bir günlük değil</h2>
+      <p>Yapay zekâ sohbeti samimi hissettirir; ama yazdıkların bir şirketin sunucusuna gider ve çoğu zaman <b>saklanır</b>.</p>
+      <p>Soldaki kartlarda karar ver: bu bilgiyi bir yapay zekâ sohbetine yazar mısın? Basit bir kural var: <b>bir yabancıya söylemeyeceğini yapay zekâya da yazma.</b></p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Üç temel kural</h3>
+      <ul>
+        <li><b>Kişisel bilgi yok:</b> tam ad, adres, okul, telefon, şifre, fotoğraf.</li>
+        <li><b>Yetişkin bilsin:</b> hangi aracı, ne için kullandığını öğretmenin ve velin bilir.</li>
+        <li><b>Rahatsız olursan kapat:</b> yapay zekâ garip, korkutucu ya da uygunsuz bir şey yazarsa ekranı kapatıp bir yetişkine söyle.</li>
+      </ul>
+      <p class="note">Orijinal tabloda bu başlık "Çocuk Yaşa Uygun YZ Kullanımı" olarak geçiyor. "Yaşa Uygun ve Güvenli Kullanım" adını öneriyoruz: güvenlik, gizlilik ve veli katılımını tek çatıda toplar.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Arkadaş değil, araç</h3>
+      <p>Bazı uygulamalar yapay zekâyı "arkadaşın" gibi sunar. Nazik olabilir, seni dinleyebilir; ama <b>seni tanımaz, seni önemsemez</b> — sadece metin üretir.</p>
+      <p>Programda bu konu açıkça konuşulur: yalnızlık, üzüntü ya da kaygı için yapay zekâ değil, <b>gerçek insanlar</b> vardır.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 06 · DOĞRULAMA ============ -->
+<section class="chapter" data-ch data-num="06" data-label="Doğrulama" data-bg="#1b3a5c" data-fg="#e8f1fb" data-accent="#ffcf4a" data-accent2="#ff8a65">
+  <div class="stage pr">
+    <div class="tool">
+      <p class="lbl">Dedektif modu — altı çizili iddialara tıkla, işaretle</p>
+      <div class="aiBox" id="aiBox">
+        <div class="who"><i></i>Yapay zekâ cevabı · "Ay hakkında bilgi ver"</div>
+        <span class="claim" data-truth="1">Ay, Dünya'ya ortalama yaklaşık 384.000 km uzaklıktadır.</span>
+        <span class="claim" data-truth="1">İnsanlı ilk Ay inişi 1969'da Apollo 11 göreviyle gerçekleşti.</span>
+        <span class="claim" data-truth="0">Ay'ın kendi ışığı vardır ve geceleri bu ışıkla parlar.</span>
+        <span class="claim" data-truth="0">1971'de Ay yüzeyinde kurulan kalıcı bir araştırma üssü bugün hâlâ çalışmaktadır.</span>
+        <span class="claim" data-truth="1">Ay'ın yüzeyinde kayda değer bir atmosfer yoktur.</span>
+      </div>
+      <p class="small" style="margin:10px 0 0">Tıkla: 1. tık = <span class="pill ok">doğru</span> &nbsp;2. tık = <span class="pill bad">şüpheli</span> &nbsp;3. tık = temizle</p>
+      <div class="row" style="justify-content:space-between;margin-top:12px">
+        <span class="score" id="clScore">0 / 5 işaretlendi</span>
+        <div class="row"><button class="btn sm" id="clReset">Baştan</button><button class="btn solid sm" id="clCheck">Kontrol et</button></div>
+      </div>
+      <div class="fb" id="clFb"></div>
+    </div>
+    <div class="wm">06</div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="card">
+      <p class="eyebrow">Bölüm 06 — Çıktıyı Sorgulama ve Doğrulama</p>
+      <h2>Kendinden emin, ama yanlış</h2>
+      <p>Yapay zekâ bazen olmayan bir şeyi <b>gerçekmiş gibi</b> yazar. Buna <b>halüsinasyon</b> denir. En tehlikeli yanı, yanlışın da doğru kadar akıcı ve emin görünmesi.</p>
+      <p>Sağdaki cevapta beş iddia var. Dedektif ol: hangileri doğru, hangileri uydurma?</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Üç adımlı kontrol</h3>
+      <ul>
+        <li><b>Kaynak iste:</b> "Bunu nereden biliyorsun?" — kaynak yoksa ya da uydurulmuşsa kırmızı bayrak.</li>
+        <li><b>Çapraz kontrol:</b> Aynı bilgiyi güvenilir ikinci bir yerden (ders kitabı, ansiklopedi, resmî site) doğrula.</li>
+        <li><b>Mantık testi:</b> "Ay'ın kendi ışığı" gibi ifadeler, bildiklerinle çelişiyor mu?</li>
+      </ul>
+      <p class="note">Eski programdaki <b>algoritmik düşünme</b> tam burada işe yarar: adım adım, koşullu, kontrol ederek düşünmek.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 07 · YARATICI ÜRETİM ============ -->
+<section class="chapter" data-ch data-num="07" data-label="Yaratıcılık" data-bg="#e8d5c4" data-fg="#2a1f1a" data-accent="#a63c22" data-accent2="#1e6a5a" data-light="1">
+  <div class="stage pl">
+    <div class="tool">
+      <p class="lbl">Hikâye makinesi — seç, üret, sonra kendin düzenle</p>
+      <div class="sel-grid" id="stSel"></div>
+      <div class="row" style="margin:10px 0">
+        <button class="btn solid" id="stGen">✨ Taslak üret</button>
+        <button class="btn" id="stEdit">✏️ Sen düzenle</button>
+      </div>
+      <div class="panel" style="padding:14px 16px">
+        <div class="story" id="stOut">Seçimlerini yap ve "Taslak üret"e bas.</div>
+        <textarea class="field" id="stTa" style="display:none;margin-top:6px" aria-label="Hikâyeni düzenle"></textarea>
+      </div>
+      <div class="row" style="justify-content:space-between;margin-top:8px">
+        <span class="score" id="stStat"></span>
+        <span class="small">Taslak: YZ · Son söz: sen</span>
+      </div>
+    </div>
+    <div class="wm">07</div>
+  </div>
+  <div class="steps">
+    <div class="step right"><div class="card">
+      <p class="eyebrow">Bölüm 07 — Yaratıcı İçerik Üretme</p>
+      <h2>Taslak makineden, imza senden</h2>
+      <p>Eski programın <b>hikâyeleştirme</b> geleneği burada devam ediyor. Yapay zekâ saniyeler içinde bir taslak verir; ama taslak bir <b>başlangıç</b>, bitmiş bir eser değil.</p>
+      <p>Solda bir hikâye üret, sonra <b>"Sen düzenle"</b>ye basıp kendi cümlelerini ekle. Fark ettin mi? Makinenin taslağı hep biraz "aynı" tadında; farkı sen yaratıyorsun.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Atölyede neler üretilir?</h3>
+      <ul>
+        <li>Sınıf gazetesi için haber metni ve başlık alternatifleri</li>
+        <li>Görsel üretim araçlarıyla afiş taslağı (öğretmen hesabından)</li>
+        <li>Kendi çizimlerini yapay zekâ ile canlandırma</li>
+        <li>Bir Scratch oyunu için karakter arka planı ve diyaloglar</li>
+      </ul>
+      <p class="note">Kural: üretilen her işte "hangi kısmı yapay zekâ yaptı, hangi kısmı ben yaptım?" satırı bulunur. Şeffaflık, yaratıcılığın parçasıdır.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 08 · YZ + KODLAMA ============ -->
+<section class="chapter" data-ch data-num="08" data-label="YZ + Kodlama" data-bg="#1f2b23" data-fg="#ecf5ea" data-accent="#9be564" data-accent2="#ffcf4a">
+  <div class="stage pr">
+    <div class="tool">
+      <div class="row" style="justify-content:space-between;margin-bottom:8px">
+        <p class="lbl" style="margin:0">Kendi sohbet botunu kur</p>
+        <div class="seg" id="botMode">
+          <button aria-pressed="true" data-m="rule">Kural</button>
+          <button aria-pressed="false" data-m="learn">Öğrenen</button>
+        </div>
+      </div>
+      <div class="rules" id="rules"></div>
+      <div class="row" style="margin-bottom:10px">
+        <input class="field" id="rK" placeholder="anahtar kelime (ör. selam)" style="flex:1;min-width:0" maxlength="24" aria-label="Anahtar kelime">
+        <input class="field" id="rV" placeholder="cevap" style="flex:1.4;min-width:0" maxlength="70" aria-label="Cevap">
+        <button class="btn sm" id="rAdd">+ Ekle</button>
+      </div>
+      <div class="chat" id="chat"></div>
+      <div class="row" style="margin-top:8px">
+        <input class="field" id="chatIn" placeholder="Botuna bir şey yaz…" style="flex:1;min-width:0" maxlength="80" aria-label="Mesaj">
+        <button class="btn solid sm" id="chatSend">Gönder</button>
+      </div>
+      <p class="small" id="botCap" style="margin:8px 0 0;min-height:20px"></p>
+    </div>
+    <div class="wm">08</div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="card">
+      <p class="eyebrow">Bölüm 08 — YZ + Kodlama Entegrasyonu</p>
+      <h2>Scratch büyüdü</h2>
+      <p>Kodlama gitmedi; <b>amaç değişti</b>. Artık "oyun yapmak" için değil, "yapay zekânın nasıl çalıştığını içeriden görmek" için kod yazıyoruz.</p>
+      <p>Sağda bir sohbet botu var. <b>Kural</b> modunda sen "eğer mesajda X geçiyorsa Y de" kuralları yazıyorsun — tıpkı Scratch'teki <span class="kbd">eğer … ise</span> bloğu gibi. Botunla konuş; kuralın olmayan bir şey yazınca ne olduğunu gör.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Kuraldan öğrenmeye</h3>
+      <p>Şimdi <b>Öğrenen</b> moduna geç. Bot artık tam eşleşme aramıyor; yazdığın mesaja <b>en çok benzeyen</b> örneği buluyor. "slm", "selamlar", "seLAM" — hepsi aynı kurala düşüyor.</p>
+      <p>İşte kural tabanlı yazılımla yapay zekâ arasındaki fark, bir düğme uzağında: <b>tam eşleşme yerine benzerlik.</b></p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Atölye araçları</h3>
+      <ul>
+        <li><b>Scratch + Machine Learning for Kids:</b> kendi metin/görüntü sınıflandırıcısını eğitip Scratch'te kullanma</li>
+        <li><b>Teachable Machine:</b> web kamerasıyla el işaretlerini tanıyan model</li>
+        <li><b>Blok tabanlı sohbet botu:</b> yukarıdaki gibi, önce kural sonra öğrenen sürüm</li>
+      </ul>
+      <p class="note">Eski programın "Scratch temelleri ve ileri teknikleri" başlığı, bu bölümün ön koşulu olarak yaşamaya devam ediyor.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 09 · ETİK ============ -->
+<section class="chapter" data-ch data-num="09" data-label="Etik" data-bg="#4a1f2e" data-fg="#f8e6ec" data-accent="#ffb4c8" data-accent2="#ffcf4a">
+  <div class="stage pl">
+    <div class="tool dil">
+      <div class="row" style="justify-content:space-between">
+        <p class="lbl" style="margin:0">İkilem kartları — sen olsan ne yapardın?</p>
+        <span class="score" id="dilNum">1 / 4</span>
+      </div>
+      <div class="q" id="dilQ"></div>
+      <div id="dilOpts"></div>
+      <div class="fb" id="dilFb"></div>
+      <div class="row" style="justify-content:space-between;margin-top:8px">
+        <button class="btn sm" id="dilPrev">← Önceki</button>
+        <button class="btn solid sm" id="dilNext">Sonraki →</button>
+      </div>
+    </div>
+    <div class="wm">09</div>
+  </div>
+  <div class="steps">
+    <div class="step right"><div class="card">
+      <p class="eyebrow">Bölüm 09 — Etik ve Sorumlu Kullanım</p>
+      <h2>Yapabilmek, yapmalı demek değil</h2>
+      <p>Yapay zekâ ile arkadaşının yüzünü bir videoya koyabilirsin. Ödevini baştan sona yazdırabilirsin. Soru şu: <b>yapmalı mısın?</b></p>
+      <p>Soldaki kartlarda gerçek hayattan durumlar var. Seç, sonucu gör. Tek doğru cevap her zaman yoktur; ama <b>açıkça yanlış</b> olanlar vardır.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Dört etik başlık</h3>
+      <ul>
+        <li><b>Dürüstlük:</b> yapay zekâ kullandığını söylemek, başkasının emeğini kendi emeğin gibi göstermemek.</li>
+        <li><b>Rıza:</b> birinin yüzünü, sesini, yazısını izinsiz kullanmamak.</li>
+        <li><b>Yanlılık:</b> yapay zekâ verideki önyargıları öğrenir; "doktor" dediğinde hep aynı tip insanı çiziyorsa bunu fark etmek.</li>
+        <li><b>Sorumluluk:</b> "yapay zekâ söyledi" mazeret değildir; paylaştığın şeyden sen sorumlusun.</li>
+      </ul>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Sahte içeriği tanımak</h3>
+      <p>Deepfake videolar, uydurma haberler, yapay görseller… Ortaokul öğrencisi bunları her gün görüyor. Program içinde <b>"gerçek mi, üretilmiş mi?"</b> oyunlarıyla medya okuryazarlığı çalışılır.</p>
+      <p class="note">Bu alt başlık orijinal tabloda yok; etik başlığının içine <b>"Sahte içerik ve deepfake farkındalığı"</b> olarak eklenmesini öneriyoruz.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 10 · EĞİTİM AMAÇLI KULLANIM ============ -->
+<section class="chapter" data-ch data-num="10" data-label="Ders Arkadaşı" data-bg="#0f3d4a" data-fg="#e6f6f9" data-accent="#7fe0c8" data-accent2="#ffcf4a">
+  <div class="stage pr">
+    <div class="tool">
+      <p class="lbl">Trafik ışığı — bu kullanım hangi renk?</p>
+      <div class="row" id="tlChips" style="margin-bottom:14px"></div>
+      <div class="tl">
+        <div class="lamp" id="lamp"><i></i><i></i><i></i></div>
+        <div class="panel" style="flex:1;min-height:110px">
+          <div id="tlTitle" style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;line-height:1.2;margin-bottom:6px">Bir kullanım seç</div>
+          <div id="tlWhy" class="small" style="line-height:1.5">Yukarıdaki kutulardan birine tıkla; ışık yansın, nedenini oku.</div>
+        </div>
+      </div>
+    </div>
+    <div class="wm">10</div>
+  </div>
+  <div class="steps">
+    <div class="step"><div class="card">
+      <p class="eyebrow">Bölüm 10 — Eğitim Amaçlı Kullanım</p>
+      <h2>Kopya değil, koç</h2>
+      <p>Aynı araç, iki farklı sonuç: yapay zekâya "ödevimi yaz" dersen <b>öğrenmezsin</b>; "bu konuyu bana soru sorarak anlat" dersen öğrenirsin.</p>
+      <p>Sağdaki kullanımları tıkla. <b>Yeşil</b> öğrenmeyi büyütür, <b>sarı</b> kurala ve şeffaflığa bağlıdır, <b>kırmızı</b> öğrenmeyi elinden alır.</p>
+    </div></div>
+    <div class="step"><div class="card">
+      <h3>Sınıf sözleşmesi</h3>
+      <p>Her sınıf, dönem başında kendi <b>yapay zekâ sözleşmesini</b> yazar: hangi ödevlerde serbest, hangilerinde yasak, nasıl belirtilecek.</p>
+      <p>Öğrenci yapay zekâ kullandığında bunu <b>"YZ notu"</b> ile belirtir: "Taslağı X aracıyla oluşturdum, şu kısımları kendim yazdım."</p>
+      <p class="note">Öğretmen için de bir başlık: sınav sorusu üretmek, farklı seviyede okuma metni hazırlamak, dönüt yazmak. Eğitim amaçlı kullanım iki yönlüdür.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 11 · İŞ BİRLİĞİ ============ -->
+<section class="chapter" data-ch data-num="11" data-label="İş Birliği" data-bg="#2b2444" data-fg="#efeafc" data-accent="#ffcf4a" data-accent2="#ff8a65">
+  <div class="stage pl">
+    <div class="tool">
+      <p class="lbl">Görev paylaşımı — proje: "Okulda geri dönüşüm kampanyası"</p>
+      <div class="panel" style="padding:6px 16px" id="tasks"></div>
+      <div class="row" style="justify-content:space-between;margin-top:12px">
+        <span class="score" id="tkScore"></span>
+        <div class="row"><button class="btn sm" id="tkReset">Baştan</button><button class="btn solid sm" id="tkCheck">Değerlendir</button></div>
+      </div>
+      <div class="fb" id="tkFb"></div>
+    </div>
+    <div class="wm">11</div>
+  </div>
+  <div class="steps">
+    <div class="step right"><div class="card">
+      <p class="eyebrow">Bölüm 11 — İnsan + YZ İş Birliği</p>
+      <h2>Kim neyi yapmalı?</h2>
+      <p>Programın son basamağı bir <b>proje</b>: gerçek bir sorun, gerçek bir ekip ve yapay zekâ. Soru "yapay zekâ kullanalım mı?" değil, "<b>hangi işi kime verelim?</b>"</p>
+      <p>Soldaki görevleri İnsan, YZ ya da Birlikte olarak ata; sonra değerlendir.</p>
+    </div></div>
+    <div class="step right"><div class="card">
+      <h3>Basit bir kural</h3>
+      <p><b>YZ hızlıdır:</b> özetler, taslak çıkarır, alternatif üretir, yazım hatası bulur.</p>
+      <p><b>İnsan karar verir:</b> sorunu tanımlar, doğruyu ayırt eder, kurallara ve insanlara karşı sorumluluk taşır, sunar ve savunur.</p>
+      <p><b>Birlikte en iyisi:</b> fikir üretimi — makine bol seçenek çıkarır, insan içinden en iyisini seçip geliştirir.</p>
+      <p class="note">Eski programın "problem çözme ve yaratıcılık" başlığı buraya evrildi: sorun aynı, araç kutusu büyüdü.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ============ 12 · PROGRAM ============ -->
+<section class="chapter fin" data-ch data-num="12" data-label="Program" data-bg="#f4efe4" data-fg="#1d1b18" data-accent="#1e6a5a" data-accent2="#b3412a" data-light="1">
+  <div class="prog">
+    <p class="eyebrow reveal">Bölüm 12 — Yol Haritası</p>
+    <h2 class="reveal" style="font-size:clamp(30px,5vw,58px);margin-bottom:10px">Program taslağı</h2>
+    <p class="reveal" style="max-width:62ch;color:var(--dim);margin:0 0 26px">Orijinal tablodaki dokuz başlık ve eklenmesini önerdiğimiz alanlar, ortaokul için 12 modüllük bir sıraya yerleştirildi. Her modülü açıp kazanım, etkinlik ve araçlarını gör.</p>
+    <div id="modules" class="reveal"></div>
+
+    <h3 class="reveal" style="font-size:clamp(22px,3vw,34px);margin:44px 0 6px">Eklenmesini önerdiğimiz başlıklar</h3>
+    <p class="reveal" style="color:var(--dim);margin:0;max-width:62ch">Tablo iyi bir omurga; ortaokul seviyesinde şu alanlar eksik ya da tek satıra sığmayacak kadar önemli.</p>
+    <div class="addgrid reveal" id="addgrid"></div>
+  </div>
+</section>
+
+<!-- ============ 13 · SÖZ ============ -->
+<section class="chapter fin" data-ch data-num="13" data-label="Söz" data-bg="#12131f" data-fg="#f3f1ea" data-accent="#ffcf4a" data-accent2="#7fe0c8">
+  <div class="finwrap" style="text-align:center">
+    <p class="eyebrow reveal">Bölüm 13 — Özet</p>
+    <h2 class="reveal" style="font-size:clamp(30px,5.4vw,64px);margin-bottom:18px">Yapay zekâ okuryazarı sözü</h2>
+    <p class="reveal" style="max-width:56ch;margin:0 auto 30px;color:var(--dim)">Program boyunca öğrenilen her şey beş cümleye sığıyor. Sınıfta hep birlikte okunur, imzalanır, duvara asılır.</p>
+    <div class="pledge reveal" style="max-width:640px;margin:0 auto">
+      <ol style="margin:0;padding-left:22px">
+        <li><b style="color:var(--accent)">Anlarım:</b> Yapay zekânın örneklerden öğrenen bir araç olduğunu bilirim; sihir değildir.</li>
+        <li><b style="color:var(--accent)">Korurum:</b> Kişisel bilgilerimi ve başkalarının bilgilerini yapay zekâya vermem.</li>
+        <li><b style="color:var(--accent)">Sorgularım:</b> Yapay zekânın söylediğini kontrol etmeden doğru kabul etmem.</li>
+        <li><b style="color:var(--accent)">Dürüst olurum:</b> Yapay zekâ kullandığımda bunu belirtirim; emeğimi ve başkalarının emeğini saklamam.</li>
+        <li><b style="color:var(--accent)">Karar veririm:</b> Yapay zekâ önerir, son kararı ben veririm ve sonucundan ben sorumluyum.</li>
+      </ol>
+      <div class="row" style="justify-content:center;margin-top:22px;gap:12px">
+        <input class="field" id="plName" placeholder="Adın" style="max-width:220px" maxlength="30" aria-label="Adın">
+        <button class="btn solid" id="plBtn">✍️ Söz veriyorum</button>
+      </div>
+      <p class="small" id="plOut" style="text-align:center;margin:14px 0 0;min-height:20px"></p>
+    </div>
+    <p class="reveal" style="margin-top:36px"><button class="btn" id="toTop">↑ Başa dön</button></p>
+  </div>
+</section>
+
+<footer>
+  <div class="cols">
+    <div>
+      <h4>Gençler YZ Öğreniyor</h4>
+      <p>Minik Eller Kod Yazıyor projesinin (2019–2026) yeni dönemi. Ortaokul öğrencileri için yapay zekâ okuryazarlığı, güvenli ve etik kullanım, yaratıcılık ve kodlama entegrasyonu.</p>
+      <p style="font-size:12px">Bu sayfa bir sunum taslağıdır; içerik öğretmen ve veli geri bildirimiyle geliştirilecektir.</p>
+    </div>
+    <div>
+      <h4>Bölümler</h4>
+      <ul id="footnav"></ul>
+    </div>
+    <div>
+      <h4>Hedef kitle</h4>
+      <p>5–8. sınıf (10–14 yaş). 5–6. sınıfta öğretmen hesabından ve sınıf içinde; 7–8. sınıfta veli onayıyla ve sınıf sözleşmesiyle.</p>
+      <h4 style="margin-top:18px">Araç kutusu</h4>
+      <p>Scratch, Machine Learning for Kids, Teachable Machine, Quick Draw, öğretmen denetiminde sohbet ve görsel üretim araçları.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,c)=>(c||document).querySelector(s), $$=(s,c)=>[...(c||document).querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const el=(t,attrs,html)=>{const e=document.createElement(t);if(attrs)for(const k in attrs){if(k==='class')e.className=attrs[k];else if(k.startsWith('on'))e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k]);}if(html!=null)e.innerHTML=html;return e;};
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const norm=s=>s.toLocaleLowerCase('tr-TR').replace(/[^\p{L}\p{N} ]/gu,'').replace(/\s+/g,' ').trim();
+
+/* ======== chrome: progress, chapter tag, dots, palette ======== */
+const chapters=$$('[data-ch]'), bar=$('#bar'), dots=$('#dots'), hint=$('#hint');
+chapters.forEach((ch,i)=>{
+  const b=document.createElement('button');
+  b.dataset.label=ch.dataset.label||('B'+i);
+  b.setAttribute('aria-label',b.dataset.label);
+  b.onclick=()=>ch.scrollIntoView({behavior:'smooth'});
+  dots.appendChild(b);
+  if(ch.dataset.num!=='—'&&ch.dataset.num!=='00'){
+    const li=document.createElement('li'), a=document.createElement('a');
+    a.href='#'; a.textContent=ch.dataset.num+' · '+ch.dataset.label;
+    a.onclick=e=>{e.preventDefault();ch.scrollIntoView({behavior:'smooth'});};
+    li.appendChild(a); $('#footnav').appendChild(li);
+  }
+});
+const dotEls=$$('#dots button');
+let current=-1;
+function applyPalette(ch){
+  const d=ch.dataset, s=document.body.style, light=d.light==='1';
+  s.setProperty('--bg',d.bg); s.setProperty('--fg',d.fg);
+  s.setProperty('--accent',d.accent); s.setProperty('--accent2',d.accent2||d.accent);
+  document.body.classList.toggle('light',light);
+  s.setProperty('--card', light?'rgba(255,255,255,.74)':'rgba(14,15,26,.66)');
+  s.setProperty('--line', light?'rgba(0,0,0,.13)':'rgba(243,241,234,.16)');
+  s.setProperty('--dim',  light?'rgba(29,27,24,.62)':'rgba(243,241,234,.62)');
+  $('#tagNum').textContent=d.num; $('#tagName').textContent=d.label;
+}
+function onScroll(){
+  const y=scrollY, h=document.documentElement.scrollHeight-innerHeight;
+  bar.style.width=(clamp(y/h,0,1)*100)+'%';
+  hint.style.opacity=y>innerHeight*.55?0:1;
+  const mid=y+innerHeight*.5;
+  let idx=0; chapters.forEach((c,i)=>{if(mid>=c.offsetTop)idx=i;});
+  if(idx!==current){
+    current=idx; applyPalette(chapters[idx]);
+    dotEls.forEach((d,i)=>d.setAttribute('aria-current',i===idx?'true':'false'));
+  }
+  stepScroll();
+}
+addEventListener('scroll',onScroll,{passive:true});
+const STEPS=$$('.step').map(e=>({el:e,top:0,h:0}));
+function measure(){STEPS.forEach(s=>{const r=s.el.getBoundingClientRect();s.top=r.top+scrollY;s.h=r.height;});}
+function stepScroll(){
+  const mid=scrollY+innerHeight*.5;
+  STEPS.forEach(s=>{const on=mid>=s.top&&mid<s.top+s.h;s.el.classList.toggle('on',on);});
+}
+addEventListener('resize',()=>{measure();onScroll();});
+addEventListener('load',()=>{measure();onScroll();});
+const once=(e,fn,th)=>{const o=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){fn();o.unobserve(x.target);}}),{threshold:th||.3});o.observe(e);};
+$$('.reveal').forEach(e=>once(e,()=>e.classList.add('on'),.15));
+$('#toTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+/* ======== hero: network canvas ======== */
+(function(){
+  const cv=$('#net'), ctx=cv.getContext('2d'); let W,H,pts=[],raf;
+  function size(){W=cv.width=innerWidth*devicePixelRatio;H=cv.height=innerHeight*devicePixelRatio;
+    const n=Math.round(clamp(innerWidth*innerHeight/14000,30,110));
+    pts=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35*devicePixelRatio,vy:(Math.random()-.5)*.35*devicePixelRatio,c:rnd(['#ffcf4a','#7fe0c8','#ff8a65'])}));}
+  let mx=-1e4,my=-1e4;
+  addEventListener('pointermove',e=>{mx=e.clientX*devicePixelRatio;my=e.clientY*devicePixelRatio;});
+  function tick(){
+    if(scrollY>innerHeight){raf=requestAnimationFrame(tick);return;}
+    ctx.clearRect(0,0,W,H);
+    const D=150*devicePixelRatio;
+    for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      const dx=mx-p.x,dy=my-p.y,d=Math.hypot(dx,dy);if(d<D*1.4){p.x-=dx/d*.6;p.y-=dy/d*.6;}}
+    ctx.lineWidth=devicePixelRatio;
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<D){ctx.strokeStyle='rgba(243,241,234,'+(0.28*(1-d/D)).toFixed(3)+')';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+    }
+    for(const p of pts){ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.2*devicePixelRatio,0,7);ctx.fill();}
+    raf=requestAnimationFrame(tick);
+  }
+  size();addEventListener('resize',size);
+  if(REDUCED){tick();cancelAnimationFrame(raf);}else tick();
+})();
+
+/* ======== 01 · dönüşüm ======== */
+(function(){
+  const PAIRS=[
+    ['Kodlama Becerilerini Geliştirmek','YZ + Kodlama Entegrasyonu'],
+    ['Dijital Beceriler Kazandırmak','Yapay Zekâ Okuryazarlığı'],
+    ['Scratch Temelleri ve İleri Teknikleri','YZ Araçlarını Eğitim Amaçlı Kullanma'],
+    ['Oyunlaştırma ve Hikâyeleştirme','YZ ile Yaratıcı İçerik Üretme'],
+    ['Üreten Nesiller','Prompt Geliştirme'],
+    ['Algoritmik Düşünme','YZ Çıktısını Sorgulama ve Doğrulama'],
+    ['Problem Çözme ve Yaratıcılık','İnsan + YZ İş Birliği ile Problem Çözme'],
+    ['— (yeni alan)','Yaşa Uygun ve Güvenli YZ Kullanımı',1],
+    ['— (yeni alan)','Etik ve Sorumlu YZ Kullanımı',1],
+  ];
+  const grid=$('#flipGrid'), sl=$('#morph'), yr=$('#morphYear'), cap=$('#morphCap');
+  const cards=PAIRS.map(([f,b,x])=>{
+    const c=el('div',{class:'flip'+(x?' extra':'')},'<div><div class="f">'+f+'</div><div class="b">'+b+(x?'<span class="new">YENİ</span>':'')+'</div></div>');
+    grid.appendChild(c);return c;});
+  function upd(){
+    const v=+sl.value; yr.textContent=String(2019+Math.round(v/100*8));
+    cards.forEach((c,i)=>c.classList.toggle('on',v>=12+i*9));
+    const n=cards.filter(c=>c.classList.contains('on')).length;
+    cap.textContent=n===0?'Kodlama odaklı dönem: 7 başlık, Scratch merkezli.':n<7?n+' başlık dönüştü…':n===7?'Tüm eski başlıklar yeni karşılığını buldu.':'Yapay zekâ odaklı dönem: 9 başlık, ikisi tamamen yeni.';
+  }
+  sl.addEventListener('input',upd); upd();
+  once(sl,()=>{ if(REDUCED)return; let v=0;const t=setInterval(()=>{v+=2;sl.value=v;upd();if(v>=100)clearInterval(t);},28); sl.addEventListener('pointerdown',()=>clearInterval(t),{once:true}); },.5);
+})();
+
+/* ======== 02 · quiz ======== */
+(function(){
+  const Q=[
+    ['🧮','Hesap makinesi',0,'Sabit kurallarla hesaplar; hiçbir şey öğrenmez.'],
+    ['📱','Telefonun yüz tanıması',1,'Binlerce yüz örneğinden "kime benziyor?" sorusunu öğrenmiştir.'],
+    ['⏰','Çalar saat',0,'"Saat 07:00 olunca çal" — tek bir kural, öğrenme yok.'],
+    ['📧','E-posta spam filtresi',1,'Milyonlarca spam örneğinden hangi mesajın şüpheli olduğunu öğrenir.'],
+    ['🎬','Video önerileri',1,'İzleme geçmişinden örüntü çıkarıp "bunu da seversin" der.'],
+    ['🚪','Marketin otomatik kapısı',0,'Hareket sensörü: birini algılayınca açılır, hepsi bu.'],
+    ['🌐','Çeviri uygulaması',1,'Milyonlarca çevrilmiş cümleden diller arası örüntüleri öğrenmiştir.'],
+    ['🗣️','Sesli asistan',1,'Konuşmayı yazıya çevirmek ve anlamak için öğrenen modeller kullanır.'],
+  ];
+  const host=$('#quiz'), sc=$('#quizScore'); let ok=0,done=0;
+  function build(){host.innerHTML='';ok=0;done=0;sc.textContent='0 / 8 doğru';
+    Q.forEach(([ic,t,a,why])=>{
+      const it=el('div',{class:'it'},'<div class="t"><span>'+ic+'</span>'+t+'</div><div class="bs"><button data-a="1">Evet, YZ</button><button data-a="0">Hayır</button></div><div class="why"></div>');
+      $$('button',it).forEach(b=>b.onclick=()=>{
+        const right=+b.dataset.a===a; it.classList.add('done',right?'ok':'bad'); done++; if(right)ok++;
+        $('.why',it).innerHTML='<span class="pill '+(right?'ok':'bad')+'">'+(right?'Doğru':'Yanlış')+'</span> '+(a?'Yapay zekâ. ':'Yapay zekâ değil. ')+why;
+        sc.textContent=ok+' / 8 doğru'+(done===8?(ok>=7?' — harika, gözün keskin! 🔍':ok>=5?' — iyi, birkaç tanesine tekrar bak.':' — kural mı örüntü mü? Kartı oku, tekrar dene.'):'');
+      });
+      host.appendChild(it);
+    });}
+  build(); $('#quizReset').onclick=build;
+})();
+
+/* ======== 03 · öğrenme alanı (k-NN) ======== */
+(function(){
+  const cv=$('#learnCv'), ctx=cv.getContext('2d'), W=cv.width, H=cv.height;
+  const stat=$('#learnStat'), cap=$('#learnCap'); let cls=0, pts=[], map=null;
+  const COL=['#ff7a9e','#7fe0c8'], BG=['rgba(255,122,158,.30)','rgba(127,224,200,.28)'], ICO=['🐈','🐶'];
+  $$('#learnCls button').forEach(b=>b.onclick=()=>{$$('#learnCls button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');cls=+b.dataset.c;});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    if(map){const CS=W/map.cols;for(let r=0;r<map.rows;r++)for(let c=0;c<map.cols;c++){ctx.fillStyle=BG[map.g[r*map.cols+c]];ctx.fillRect(c*CS,r*CS,CS+.5,CS+.5);}}
+    ctx.font='26px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(const p of pts){ctx.fillStyle=COL[p.c];ctx.beginPath();ctx.arc(p.x,p.y,17,0,7);ctx.fill();ctx.fillText(ICO[p.c],p.x,p.y+1);}
+    const n0=pts.filter(p=>!p.c).length, n1=pts.length-n0;
+    stat.textContent=pts.length+' örnek · '+n0+' kedi · '+n1+' köpek';
+  }
+  function add(e){const r=cv.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;pts.push({x,y,c:cls});map=null;cap.textContent=pts.length<4?'Birkaç örnek daha ekle, sonra "Öğren".':'Hazır — "Öğren"e bas, karar haritasını gör.';draw();}
+  cv.addEventListener('pointerdown',add);
+  $('#learnClear').onclick=()=>{pts=[];map=null;cap.textContent='Alan temizlendi. Yeni örnekler koy.';draw();};
+  $('#learnDemo').onclick=()=>{pts=[];for(let i=0;i<9;i++){pts.push({x:80+Math.random()*220+(i%3)*30,y:60+Math.random()*250,c:0});pts.push({x:300+Math.random()*240,y:120+Math.random()*240,c:1});}map=null;cap.textContent='18 örnek yüklendi. Şimdi "Öğren".';draw();};
+  $('#learnBtn').onclick=()=>{
+    if(pts.length<2||!pts.some(p=>!p.c)||!pts.some(p=>p.c)){cap.textContent='Makine öğrenemedi: en az bir kedi ve bir köpek örneği gerekli.';return;}
+    const cols=60, rows=40, CS=W/cols, K=Math.min(3,pts.length), g=new Uint8Array(cols*rows);
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const x=(c+.5)*CS,y=(r+.5)*CS;
+      const near=pts.map(p=>({c:p.c,d:(p.x-x)**2+(p.y-y)**2})).sort((a,b)=>a.d-b.d).slice(0,K);
+      const v=near.reduce((s,p)=>s+p.c,0); g[r*cols+c]=v*2>K?1:0;
+    }
+    map={cols,rows,g};
+    cap.textContent=pts.length<6?'Az örnek → kaba ve kararsız bir harita. Daha çok örnek ekle, tekrar öğret.':pts.length<14?'Harita şekilleniyor. Kenarlarda hâlâ tereddüt var — örnekleri artır.':'Makine örneklerden bir "karar sınırı" çıkardı. Yeni bir noktaya tıklarsan hangi tarafa düştüğünü haritadan görürsün.';
+    if(REDUCED){draw();return;}
+    let t0=performance.now();(function anim(t){const p=Math.min(1,(t-t0)/600);ctx.globalAlpha=1;draw();ctx.fillStyle='rgba(22,51,46,'+(1-p)+')';ctx.fillRect(0,0,W,H);ctx.font='26px system-ui';for(const q of pts){ctx.fillStyle=COL[q.c];ctx.beginPath();ctx.arc(q.x,q.y,17,0,7);ctx.fill();ctx.fillText(ICO[q.c],q.x,q.y+1);}if(p<1)requestAnimationFrame(anim);})(t0);
+  };
+  draw();
+})();
+
+/* ======== 04 · prompt atölyesi ======== */
+(function(){
+  const G=[
+    ['Rol',['bir fen öğretmeni gibi','bir gazeteci gibi','bir sınıf arkadaşı gibi']],
+    ['Görev',['kısa bir bilgi metni yaz','5 soruluk bir test hazırla','bir kampanya sloganı öner','adım adım açıkla']],
+    ['Bağlam',['7. sınıf öğrencileri için','okul panosunda asılacak','hiç bilmeyen biri için']],
+    ['Format',['madde madde','üç kısa paragraf','tablo hâlinde']],
+    ['Kısıt',['en fazla 100 kelime','basit Türkçe ile','kaynak da belirt','şaka yapma, ciddi ol']],
+  ];
+  const host=$('#pGroups'), out=$('#pOut'), meter=$('#pMeter'), score=$('#pScore'), topic=$('#pTopic');
+  const sel=G.map(()=>null);
+  G.forEach(([name,opts],gi)=>{
+    const row=el('div',{class:'row'},'<span class="lbl" style="margin:0;min-width:56px">'+name+'</span>');
+    opts.forEach(o=>{const c=el('button',{class:'chip','aria-pressed':'false'},o);
+      c.onclick=()=>{const on=c.getAttribute('aria-pressed')==='true';$$('.chip',row).forEach(x=>x.setAttribute('aria-pressed','false'));if(!on){c.setAttribute('aria-pressed','true');sel[gi]=o;}else sel[gi]=null;upd();};
+      row.appendChild(c);});
+    host.appendChild(row);
+  });
+  function upd(){
+    const t=topic.value.trim()||'…', [r,g,b,f,k]=sel, n=sel.filter(Boolean).length;
+    let s='';
+    if(r)s+=r.charAt(0).toUpperCase()+r.slice(1)+' davran. ';
+    s+=(g?g.charAt(0).toUpperCase()+g.slice(1):'"'+t+'" hakkında bir şey yaz')+(g?' — konu: '+t:'')+'. ';
+    if(b)s+='Bu metin '+b+'. ';
+    if(f)s+='Cevabı '+f+' ver. ';
+    if(k)s+='Kısıt: '+k+'.';
+    out.textContent=s.trim();
+    meter.style.width=(n/5*100)+'%'; meter.style.background=n<2?'var(--bad)':n<4?'var(--warn)':'var(--ok)';
+    score.textContent='Güç: '+n+' / 5'+(n===0?' — "bir şey yaz" kadar zayıf':n===5?' — usta prompt!':'');
+  }
+  topic.addEventListener('input',upd); upd();
+})();
+
+/* ======== 05 · paylaşır mısın? ======== */
+(function(){
+  const C=[
+    ['🎨','En sevdiğin renk','"Mor seviyorum, odama uygun bir renk öner."',1,'Kimliğini açığa çıkarmaz; rahatça paylaşılabilir.'],
+    ['🏫','Okulunun adı','"… Ortaokulu\'nda okuyorum, bana …"',0,'Okul adı + sınıf, seni bulunabilir kılar. Sadece "bir ortaokul" de.'],
+    ['🔑','Bir hesabının şifresi','"Şifrem 1234abc, güçlü mü?"',0,'Asla. Şifreni kimseye ve hiçbir uygulamaya yazma; güçlü şifre kuralını sor, şifreyi değil.'],
+    ['📚','Ödevinin konusu','"Fen ödevim su döngüsü hakkında, anlat."',1,'Ödev konusu kişisel bilgi değil; öğrenme için tam doğru kullanım.'],
+    ['🏠','Ev adresin','"… Sokak No: 5\'te oturuyorum, yakında park var mı?"',0,'Adres, en riskli bilgilerden biri. Şehir ölçeğinde bile dikkatli ol.'],
+    ['🤳','Kendi fotoğrafın','"Bu benim fotoğrafım, avatar yap."',0,'Yüzün biyometrik veridir; yüklenince nereye gittiğini bilemezsin. Çizim ya da avatar tarif et.'],
+    ['⚽','Sevdiğin takım / hobi','"Basketbolu seviyorum, antrenman planı öner."',1,'Genel ilgi alanları güvenlidir.'],
+    ['👧','Arkadaşının adı ve sorunu','"Arkadaşım Elif\'in ailesi boşanıyor, ne yapayım?"',0,'Başkasının özel bilgisini paylaşmak rıza ister. Adı ve ayrıntıyı çıkar; "bir arkadaşım" de. Böyle konularda ayrıca bir yetişkine danış.'],
+  ];
+  const deck=$('#deck'), fb=$('#dkFb'), sc=$('#dkScore'); let i=0, ok=0, lock=false;
+  const cards=C.map(([ic,t,ctx])=>{const d=el('div',{class:'sc'},'<div class="ico">'+ic+'</div><div class="t">'+t+'</div><div class="ctx">'+ctx+'</div>');deck.appendChild(d);return d;});
+  function show(){cards.forEach((c,k)=>{c.classList.toggle('on',k===i);c.classList.toggle('out',k<i);});sc.textContent=Math.min(i,8)+' / 8';
+    if(i>=C.length){fb.innerHTML='<span class="pill ok">Bitti</span> '+ok+' / 8 doğru. '+(ok===8?'Gizlilik ustası! 🛡️':'Yanlışları tekrar oku: kural basit — yabancıya söylemeyeceğini yazma.');$('#dkYes').disabled=$('#dkNo').disabled=true;}}
+  function ans(v){if(lock||i>=C.length)return;const c=C[i],right=v===c[3];if(right)ok++;
+    fb.innerHTML='<span class="pill '+(right?'ok':'bad')+'">'+(right?'Doğru':'Dikkat')+'</span> '+c[4];lock=true;
+    setTimeout(()=>{i++;lock=false;show();if(i<C.length)fb.innerHTML=fb.innerHTML;},1500);}
+  $('#dkYes').onclick=()=>ans(1);$('#dkNo').onclick=()=>ans(0);
+  $('#dkReset').onclick=()=>{i=0;ok=0;fb.textContent='';$('#dkYes').disabled=$('#dkNo').disabled=false;show();};
+  show();
+})();
+
+/* ======== 06 · dedektif ======== */
+(function(){
+  const claims=$$('.claim'), sc=$('#clScore'), fb=$('#clFb');
+  const upd=()=>{sc.textContent=claims.filter(c=>c.dataset.mark).length+' / 5 işaretlendi';};
+  claims.forEach(c=>c.onclick=()=>{const m=c.dataset.mark;c.dataset.mark=!m?'ok':m==='ok'?'sus':'';if(!c.dataset.mark)delete c.dataset.mark;c.classList.remove('rev-hit','rev-miss');upd();});
+  $('#clCheck').onclick=()=>{
+    let hit=0,marked=0;
+    claims.forEach(c=>{const m=c.dataset.mark;if(!m)return;marked++;const right=(m==='ok')===(c.dataset.truth==='1');c.classList.toggle('rev-hit',right);c.classList.toggle('rev-miss',!right);if(right)hit++;});
+    if(marked<5){fb.innerHTML='<span class="pill warn">Eksik</span> Henüz '+marked+' iddia işaretledin. Beşini de işaretle.';return;}
+    fb.innerHTML='<span class="pill '+(hit===5?'ok':'warn')+'">'+hit+' / 5</span> '+(hit===5?'Tam isabet! Uyduranlar: Ay\'ın kendi ışığı yoktur (Güneş\'i yansıtır) ve Ay\'da kalıcı üs hiç kurulmadı.':'Üstü çizilenler yanlış işaretlendi. İpucu: Ay\'ın kendi ışığı var mı? Ay\'da bugün insan yaşıyor mu?');
+  };
+  $('#clReset').onclick=()=>{claims.forEach(c=>{delete c.dataset.mark;c.classList.remove('rev-hit','rev-miss');});fb.textContent='';upd();};
+})();
+
+/* ======== 07 · hikâye makinesi ======== */
+(function(){
+  const S=[
+    ['Kahraman',['meraklı bir robot','uykucu bir kedi','7. sınıftan Deniz','konuşan bir kütüphane kitabı']],
+    ['Mekân',['okulun çatısında','terk edilmiş bir uzay istasyonunda','şehrin altındaki gizli metroda','yağmurlu bir pazar sabahı evde']],
+    ['Sorun',['kayıp bir anahtarın peşinde','herkesin unuttuğu bir şarkıyı hatırlamaya çalışıyor','bozulan bir yapay zekâyı düzeltmek zorunda','yarın sabaha kadar bir sunum hazırlamalı']],
+    ['Ton',['komik','gizemli','sıcak ve dokunaklı','heyecanlı']],
+  ];
+  const host=$('#stSel'), out=$('#stOut'), ta=$('#stTa'), stat=$('#stStat'); const sel=S.map(x=>x[1][0]);
+  S.forEach(([n,o],i)=>{const w=el('div');const s=el('select',{class:'field','aria-label':n});o.forEach(v=>s.appendChild(el('option',{value:v},v)));s.onchange=()=>sel[i]=s.value;w.appendChild(el('p',{class:'lbl',style:'margin-bottom:5px'},n));w.appendChild(s);host.appendChild(w);});
+  const T={
+    komik:['Her şey, <em>{k}</em> {m} bir hapşırıkla başlattığı zincirleme kazayla başladı.','O gün {h} {s} — ama önce ayakkabısının tekini bulması gerekiyordu.','Sonunda sorun çözüldü; kimse nasıl olduğunu anlamadı, en az da {h}.'],
+    gizemli:['{m} garip bir sessizlik vardı ve <em>{k}</em> bunun nedenini biliyordu… ya da bildiğini sanıyordu.','{h} {s}; her ipucu bir öncekinden daha tuhaftı.','Cevap bulunduğunda, {h} keşke bulmasaymışım diye düşündü.'],
+    'sıcak ve dokunaklı':['<em>{k}</em> {m} otururken, kimsenin fark etmediği küçük bir şeyi fark etti.','{h} {s}; yalnız değildi, sadece bunu henüz bilmiyordu.','Akşam olduğunda hiçbir şey değişmemişti — ama {h} artık başka biriydi.'],
+    heyecanlı:['Üç, iki, bir — <em>{k}</em> {m} nefesini tuttu.','{h} {s} ve zaman hızla tükeniyordu.','Son saniyede, kimsenin beklemediği bir hamleyle {h} her şeyi tersine çevirdi.'],
+  };
+  const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  function gen(){const [k,m,s,t]=sel;const arr=T[t];let txt=arr.map(x=>x.replace(/\{k\}/g,k).replace(/\{h\}/g,'kahramanımız').replace(/\{m\}/g,m).replace(/\{s\}/g,s)).map(x=>cap(x.replace(/^<em>(\w)/,(a,b)=>'<em>'+b.toUpperCase()))).join(' ');
+    out.innerHTML=txt;out.style.display='';ta.style.display='none';stat.textContent='Yapay zekâ taslağı · '+out.textContent.split(/\s+/).length+' kelime';}
+  $('#stGen').onclick=gen;
+  $('#stEdit').onclick=()=>{if(out.textContent.startsWith('Seçimlerini'))gen();ta.value=out.textContent;out.style.display='none';ta.style.display='block';ta.focus();stat.textContent='Sen düzenliyorsun · '+ta.value.split(/\s+/).filter(Boolean).length+' kelime';};
+  ta.addEventListener('input',()=>{stat.textContent='Sen düzenliyorsun · '+ta.value.split(/\s+/).filter(Boolean).length+' kelime';});
+})();
+
+/* ======== 08 · sohbet botu ======== */
+(function(){
+  let rules=[['selam','Selam! Ben senin kurduğun bot.'],['adın ne','Adım henüz yok, bana bir ad ver!'],['hava','Pencereden bakmam lazım ama gözüm yok 🙃'],['bay','Görüşürüz!']];
+  let mode='rule'; const host=$('#rules'), chat=$('#chat'), cap=$('#botCap');
+  function render(){host.innerHTML='';rules.forEach(([k,v],i)=>{const r=el('div',{class:'rule'},'<span class="k">'+k+'</span><span style="opacity:.5">→</span><span>'+v+'</span>');const x=el('button',{class:'x','aria-label':'Sil'},'✕');x.onclick=()=>{rules.splice(i,1);render();};r.appendChild(x);host.appendChild(r);});}
+  $('#rAdd').onclick=()=>{const k=norm($('#rK').value),v=$('#rV').value.trim();if(!k||!v)return;rules.push([k,v]);$('#rK').value='';$('#rV').value='';render();};
+  $$('#botMode button').forEach(b=>b.onclick=()=>{$$('#botMode button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');mode=b.dataset.m;cap.textContent=mode==='rule'?'Kural modu: mesajda anahtar kelime tam olarak geçmeli.':'Öğrenen mod: tam eşleşme yerine en çok benzeyen anahtar kelime seçilir.';});
+  const big=s=>{s=' '+s+' ';const o=new Set();for(let i=0;i<s.length-1;i++)o.add(s.slice(i,i+2));return o;};
+  const subseq=(a,b)=>{let i=0;for(const ch of b){if(ch===a[i])i++;}return i===a.length;};
+  const sim=(a,b)=>{if(a===b)return 1;const A=big(a),B=big(b);let n=0;for(const x of A)if(B.has(x))n++;let s=2*n/(A.size+B.size);
+    const [sh,lo]=a.length<=b.length?[a,b]:[b,a];if(lo.startsWith(sh))s=Math.max(s,.6+.4*sh.length/lo.length);else if(sh.length>=3&&subseq(sh,lo))s=Math.max(s,.45+.4*sh.length/lo.length);return s;};
+  function reply(msg){const m=norm(msg);
+    if(mode==='rule'){const r=rules.find(([k])=>m.includes(k));return r?[r[1],'kural: "'+r[0]+'"']:['Anlamadım. (Bu mesaj için kuralım yok.)','eşleşme yok'];}
+    let best=null,bs=0;for(const [k,v] of rules){let s=sim(m,k);for(const w of m.split(' '))s=Math.max(s,sim(w,k));if(s>bs){bs=s;best=[k,v];}}
+    return bs>=.5?[best[1],'en benzer: "'+best[0]+'" · benzerlik %'+Math.round(bs*100)]:['Bunu hiç görmedim, emin değilim.','en yüksek benzerlik %'+Math.round(bs*100)+' — eşik %50'];}
+  function send(){const v=$('#chatIn').value.trim();if(!v)return;$('#chatIn').value='';chat.appendChild(el('div',{class:'msg u'},v));const [r,why]=reply(v);
+    setTimeout(()=>{chat.appendChild(el('div',{class:'msg b'},r+'<small>'+why+'</small>'));chat.scrollTop=chat.scrollHeight;},350);chat.scrollTop=chat.scrollHeight;}
+  $('#chatSend').onclick=send;$('#chatIn').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+  chat.appendChild(el('div',{class:'msg b'},'Merhaba! "selam", "adın ne" ya da "hava" yaz. Sonra "slm" dene.<small>hazır bot</small>'));
+  cap.textContent='Kural modu: mesajda anahtar kelime tam olarak geçmeli.';render();
+})();
+
+/* ======== 09 · ikilemler ======== */
+(function(){
+  const D=[
+    ['Öğretmen "Çevre kirliliği" konulu bir kompozisyon istedi. Yapay zekâ üç dakikada yazabilir.',[
+      ['Yapay zekâya yazdırır, adımı yazıp teslim ederim.','r','Bu kopya. Öğrenmedin, üstelik öğretmen fark ederse güven kaybı büyük.'],
+      ['Fikir ve taslak için sorarım; kendi cümlelerimle yazar, kullandığımı belirtirim.','g','Dürüst ve akıllıca. Yapay zekâ koç, yazan sensin.'],
+      ['Hiç kullanmam; tamamen kendim yazarım.','y','Elbette olur. Ama "hiç kullanmamak" tek doğru değil; kurallı kullanmayı öğrenmek de bir beceri.']]],
+    ['Bir arkadaşının fotoğrafıyla komik bir dans videosu yapabileceğin bir uygulama buldun.',[
+      ['Yapar, sınıf grubuna atarım — çok komik olur.','r','Arkadaşının yüzü onun. İzinsiz kullanmak rızayı çiğner; "şaka" olsa bile zorbalığa dönüşebilir.'],
+      ['Önce arkadaşıma sorarım; "olmaz" derse yapmam.','g','Rıza tam olarak bu. "Evet" dese bile paylaşmadan önce tekrar sor.'],
+      ['Kendi fotoğrafımla yaparım, kimseye göstermem.','y','Kendi görüntünle daha güvenli; ama yüzünü yüklediğin uygulamanın ne yaptığını da bilmelisin.']]],
+    ['Yapay zekâdan "bir doktor çiz" istedin; on kez denedin, hep aynı tipte bir adam çizdi.',[
+      ['Demek ki doktorlar böyle; öyle kullanırım.','r','Yapay zekâ verideki önyargıyı öğrenir ve tekrarlar. Bunu "gerçek" sanmak yanlılığı büyütür.'],
+      ['Fark ederim, "farklı insanlar çiz" diye isterim ve sınıfta konuşuruz.','g','Yanlılığı fark etmek ve düzeltmeye çalışmak, okuryazarlığın ta kendisi.'],
+      ['Uygulamayı kapatırım, bir daha kullanmam.','y','Anlaşılır tepki; ama yanlılığı görüp adlandırmak, kaçmaktan daha güçlü bir beceri.']]],
+    ['Sunumun için yapay zekâ sana ilginç bir istatistik verdi: "Okyanuslardaki plastiğin %90\'ı tek bir nehirden geliyor."',[
+      ['Sunuma koyarım; çok çarpıcı.','r','Kaynağı yok ve şüpheli. Yanlış bir rakamı sınıfa yaymış olursun; sorumluluk senin.'],
+      ['Kaynağını sorar, güvenilir bir siteden doğrular, doğrulanmazsa kullanmam.','g','Doğrulama alışkanlığı. Bulduğun kaynağı sunuma da ekle.'],
+      ['Rakamı yumuşatıp "çoğu" diye yazarım.','y','Belirsizleştirmek doğrulamanın yerini tutmaz. Yine de kaynak bul.']]],
+  ];
+  let i=0,picked={};
+  const q=$('#dilQ'),o=$('#dilOpts'),fb=$('#dilFb'),n=$('#dilNum');
+  function show(){const [t,opts]=D[i];q.textContent=t;n.textContent=(i+1)+' / 4';o.innerHTML='';fb.textContent='';
+    opts.forEach(([txt,c,why],k)=>{const b=el('button',{class:'opt'},txt);b.onclick=()=>{$$('.opt',o).forEach((x,j)=>{x.classList.remove('pick','g','y','r','dim');if(j!==k)x.classList.add('dim');});b.classList.add('pick',c);picked[i]=c;
+      fb.innerHTML='<span class="pill '+(c==='g'?'ok':c==='y'?'warn':'bad')+'">'+(c==='g'?'İyi seçim':c==='y'?'Olabilir':'Sakıncalı')+'</span> '+why;};
+      if(picked[i]===c&&picked[i]){b.classList.add('pick',c);fb.innerHTML='<span class="pill '+(c==='g'?'ok':c==='y'?'warn':'bad')+'">'+(c==='g'?'İyi seçim':c==='y'?'Olabilir':'Sakıncalı')+'</span> '+why;}
+      o.appendChild(b);});}
+  $('#dilPrev').onclick=()=>{i=(i+3)%4;show();};$('#dilNext').onclick=()=>{i=(i+1)%4;show();};show();
+})();
+
+/* ======== 10 · trafik ışığı ======== */
+(function(){
+  const U=[
+    ['Anlamadığım konuyu bana anlatmasını istemek','g','Öğrenmeyi büyütür. "Örnek ver", "daha basit anlat" diye devam et.'],
+    ['Ödevin tamamını yazdırmak','r','Öğrenme yok, üstelik dürüst değil. Sınıf sözleşmesinde kırmızı.'],
+    ['Sınavda telefonla cevap sormak','r','Kopya. Yapay zekâ olması bunu değiştirmez.'],
+    ['Yazdığım metnin hatalarını bulmasını istemek','y','Yararlı; ama öğretmenin kuralına bağlı ve YZ notuyla belirtilmeli.'],
+    ['Kendime çalışma planı yaptırmak','g','Planlama desteği, öğrenmeyi sen yaparsın.'],
+    ['Konuyla ilgili test soruları ürettirmek','g','Kendini sınamak için mükemmel. Cevapları da doğrula!'],
+    ['Kitabı okumak yerine özetini istemek','r','Kitabın kendisi ödevin amacı. Özet, okuduktan sonra tekrar için olabilir.'],
+    ['İngilizce konuşma pratiği yapmak','g','Sabırlı bir pratik partneri. Söylediklerini de öğretmene göster.'],
+    ['Proje için fikir listesi almak','y','Başlangıç için iyi; ama fikirlerden birini seçip geliştirmek senin işin.'],
+  ];
+  const chips=$('#tlChips'),lamp=$('#lamp'),t=$('#tlTitle'),w=$('#tlWhy');
+  U.forEach(([txt,c,why])=>{const b=el('button',{class:'chip','aria-pressed':'false'},txt);b.onclick=()=>{$$('.chip',chips).forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');lamp.className='lamp '+c;t.textContent=txt;w.innerHTML='<span class="pill '+(c==='g'?'ok':c==='y'?'warn':'bad')+'">'+(c==='g'?'Yeşil':c==='y'?'Sarı':'Kırmızı')+'</span> '+why;};chips.appendChild(b);});
+})();
+
+/* ======== 11 · görev paylaşımı ======== */
+(function(){
+  const T=[
+    ['Sorunu tanımlamak: okulda ne kadar çöp ayrıştırılmıyor?','İnsan','Gözlem ve ölçüm gerçek dünyada yapılır; yapay zekâ okulu göremez.'],
+    ['Kampanya için 20 slogan fikri çıkarmak','Birlikte','Makine bol seçenek üretir, siz içinden en iyisini seçip düzeltirsiniz.'],
+    ['Anket cevaplarını özetlemek','YZ','Tekrarlı ve hızlı bir iş; sonucu yine de kontrol edin.'],
+    ['Okul kurallarına ve öğretmen onayına uygunluğu kontrol etmek','İnsan','Kuralları ve insanları tanıyan sizsiniz; sorumluluk devredilemez.'],
+    ['Afiş metninin yazım hatalarını bulmak','YZ','Yazım denetimi makinenin en güçlü olduğu alanlardan.'],
+    ['Afişin tasarım taslağını çıkarmak','Birlikte','Taslak makineden, seçim ve son dokunuş sizden.'],
+    ['Sınıfa sunum yapmak ve soruları yanıtlamak','İnsan','Sunan, ikna eden ve hesap veren insandır.'],
+    ['Son kararı vermek: kampanya böyle mi çıkacak?','İnsan','Karar ve sorumluluk her zaman insanda kalır.'],
+  ];
+  const host=$('#tasks'),sc=$('#tkScore'),fb=$('#tkFb');const pick=T.map(()=>null);
+  function build(){host.innerHTML='';T.forEach(([txt,ans,why],i)=>{const r=el('div',{class:'task'},'<span>'+txt+'</span>');const s=el('div',{class:'seg'});['İnsan','Birlikte','YZ'].forEach(o=>{const b=el('button',{'aria-pressed':'false'},o);b.onclick=()=>{$$('button',s).forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');pick[i]=o;r.classList.remove('hit','miss','rev');upd();};s.appendChild(b);});r.appendChild(s);r.appendChild(el('div',{class:'why'},'Önerilen: <b>'+ans+'</b> — '+why));host.appendChild(r);});upd();}
+  function upd(){sc.textContent=pick.filter(Boolean).length+' / 8 atandı';}
+  $('#tkCheck').onclick=()=>{if(pick.some(p=>!p)){fb.innerHTML='<span class="pill warn">Eksik</span> Tüm görevleri ata.';return;}let hit=0;$$('.task',host).forEach((r,i)=>{const ok=pick[i]===T[i][1];r.classList.add('rev',ok?'hit':'miss');if(ok)hit++;});
+    fb.innerHTML='<span class="pill '+(hit>=6?'ok':'warn')+'">'+hit+' / 8</span> '+(hit===8?'Mükemmel iş bölümü!':hit>=6?'İyi. Farklı düşündüğün yerlerin gerekçesini oku; tartışmaya açık olanlar da var.':'Kuralı hatırla: YZ hızlıdır, insan karar verir, fikirde birlikte.');};
+  $('#tkReset').onclick=()=>{pick.fill(null);fb.textContent='';build();};
+  build();
+})();
+
+/* ======== 12 · program ======== */
+(function(){
+  const M=[
+    ['Tanışma: Yapay zekâ nedir, ne değildir?','Günlük hayattaki YZ uygulamalarını tanır; kural tabanlı sistemlerden ayırt eder.','"YZ mi değil mi?" kart oyunu; sınıfın YZ haritası.','Kartlar, pano','',''],
+    ['Yapay zekâ nasıl öğrenir?','Veri, örnek ve örüntü kavramlarını basit düzeyde açıklar; yanlılığın veriden geldiğini fark eder.','Teachable Machine ile el işareti tanıma; "kötü veriyle eğit" deneyi.','Teachable Machine, Quick Draw','1',''],
+    ['Yaşa uygun ve güvenli kullanım','Kişisel veriyi tanımlar; hangi bilgiyi paylaşmayacağını bilir; veli/öğretmen kuralını uygular.','"Paylaşır mısın?" kart oyunu; sınıf YZ sözleşmesi; veli bilgilendirme mektubu.','Sınıf sözleşmesi şablonu','','1'],
+    ['Prompt geliştirme','Rol-görev-bağlam-format-kısıt yapısıyla istek yazar; takip sorularıyla cevabı iyileştirir.','Prompt atölyesi; aynı konuya zayıf/güçlü prompt karşılaştırması.','Öğretmen denetimli sohbet aracı','',''],
+    ['Sorgula ve doğrula','Halüsinasyon kavramını bilir; kaynak isteme, çapraz kontrol ve mantık testini uygular.','Dedektif oyunu: hatalı YZ cevaplarını bulma; kaynak avı.','Ansiklopedi, ders kitabı, resmî siteler','',''],
+    ['Sahte içeriği tanımak','Üretilmiş görsel, ses ve videoyu şüpheyle karşılar; basit ipuçlarını bilir.','"Gerçek mi, üretilmiş mi?" yarışması; deepfake ipuçları listesi.','Örnek görsel/ses seti','1',''],
+    ['Yaratıcı üretim','YZ\'yi taslak aracı olarak kullanır; kendi katkısını belirtir.','Sınıf gazetesi; afiş; kendi çizimini canlandırma; "YZ notu" ile teslim.','Görsel üretim (öğretmen hesabı), Canva','',''],
+    ['YZ + Kodlama I: Kural tabanlı bot','Scratch\'te koşullu yapılarla sohbet botu kurar.','Blok tabanlı sohbet botu; kuralın sınırını keşfetme.','Scratch','',''],
+    ['YZ + Kodlama II: Öğrenen model','Kendi sınıflandırıcısını eğitip Scratch projesinde kullanır.','Machine Learning for Kids ile duygu/metin sınıflandırıcı.','Machine Learning for Kids, Scratch','',''],
+    ['Etik ve sorumluluk','Dürüstlük, rıza, yanlılık ve sorumluluk başlıklarında karar verir.','İkilem kartları; sınıf tartışması; "YZ söyledi" mazeret değildir panosu.','İkilem kartları','',''],
+    ['Ders arkadaşı olarak YZ','Öğrenmeyi büyüten ve engelleyen kullanımı ayırt eder; sınıf sözleşmesini uygular.','Trafik ışığı oyunu; YZ ile çalışma planı; öğretmen için YZ kullanımı.','Sınıf sözleşmesi, planlama şablonu','',''],
+    ['Bitirme projesi: İnsan + YZ iş birliği','Gerçek bir sorun için ekip hâlinde, görev paylaşımı yaparak çözüm üretir ve sunar.','Okul/mahalle sorunu projesi; görev paylaşım tablosu; jüri sunumu.','Tüm araç kutusu','','1'],
+  ];
+  const host=$('#modules');
+  M.forEach(([t,k,e,a,nw,wide],i)=>{
+    const d=el('details',{class:'mod'});
+    d.innerHTML='<summary><span class="n">'+String(i+1).padStart(2,'0')+'</span><span>'+t+(nw?'<span class="tagnew">YENİ</span>':'')+'</span><span class="ar"></span></summary><div class="bd"><div><h4>Kazanım</h4><p>'+k+'</p></div><div><h4>Etkinlik</h4><p>'+e+'</p></div><div><h4>Araçlar</h4><p>'+a+'</p></div></div>';
+    if(i===0)d.open=true; host.appendChild(d);
+  });
+  const A=[
+    ['🧠','Yapay zekâ nasıl öğrenir?','Okuryazarlık, "nasıl çalışır?" sorusuna basit bir cevap olmadan kurulamıyor: veri, örnek, örüntü, tahmin. Elle tutulur deneylerle.','Tüm sınıflar'],
+    ['🛡️','Gizlilik ve kişisel veri','"Yaşa uygun kullanım" tek satıra sığmıyor. Kişisel veri, hesap güvenliği, veli izni ve 13 yaş sınırı ayrı bir modül hak ediyor.','5–6. sınıf öncelikli'],
+    ['🎭','Sahte içerik ve deepfake farkındalığı','Üretilmiş görsel, ses ve video her gün öğrencinin ekranında. Etik başlığının altında ayrı bir alt başlık olmalı.','7–8. sınıf'],
+    ['⚖️','Yanlılık ve adalet','YZ verideki önyargıyı öğrenir. "Doktor çiz" deneyi gibi somut örneklerle fark ettirilebilir.','7–8. sınıf'],
+    ['💬','Duygusal sınırlar','"YZ arkadaşım" uygulamaları ortaokul yaşında yaygınlaşıyor. Araç ile arkadaş arasındaki fark açıkça konuşulmalı.','Tüm sınıflar'],
+    ['👨‍👩‍👧','Veli katılımı','Yaş sınırları nedeniyle veli onayı ve bilgilendirmesi programın parçası olmak zorunda: veli semineri, evde kullanım rehberi.','Program geneli'],
+    ['📝','Akademik dürüstlük ve YZ notu','Hangi ödevde ne kadar YZ? Sınıf sözleşmesi ve "YZ notu" alışkanlığı, kopya tartışmasını baştan çözer.','Tüm sınıflar'],
+    ['🚀','Meslekler ve gelecek','YZ ile değişen meslekler, yeni işler, "yapay zekâ ile birlikte çalışan insan" profili. 8. sınıf için yönlendirme değeri yüksek.','8. sınıf'],
+  ];
+  const g=$('#addgrid');
+  A.forEach(([ic,t,p,lv])=>g.appendChild(el('div',{class:'add'},'<div class="ic">'+ic+'</div><h4>'+t+'</h4><p>'+p+'</p><span class="lv">'+lv+'</span>')));
+})();
+
+/* ======== 13 · söz + konfeti ======== */
+(function(){
+  const cv=$('#confetti'),ctx=cv.getContext('2d');let ps=[],raf;
+  function burst(){if(REDUCED)return;cv.width=innerWidth;cv.height=innerHeight;ps=Array.from({length:140},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*.6,vx:(Math.random()-.5)*14,vy:-Math.random()*16-4,r:Math.random()*6+3,c:rnd(['#ffcf4a','#7fe0c8','#ff8a65','#f3f1ea','#9be564']),a:Math.random()*6,s:(Math.random()-.5)*.3}));
+    let t0=performance.now();cancelAnimationFrame(raf);(function tick(t){ctx.clearRect(0,0,cv.width,cv.height);for(const p of ps){p.x+=p.vx;p.y+=p.vy;p.vy+=.45;p.vx*=.99;p.a+=p.s;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);ctx.restore();}if(t-t0<2600)raf=requestAnimationFrame(tick);else ctx.clearRect(0,0,cv.width,cv.height);})(t0);}
+  $('#plBtn').onclick=()=>{const n=$('#plName').value.trim()||'Bir YZ okuryazarı';$('#plOut').innerHTML='<span class="pill ok">İmzalandı</span> '+n+', '+new Date().toLocaleDateString('tr-TR')+' tarihinde sözünü verdi. 🎉';burst();};
+})();
+})();
+</script>
+</body>
+</html>

@@ -179,7 +179,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .flip .f{background:color-mix(in srgb,var(--fg) 8%,transparent);color:var(--dim)}
 .flip .b{background:var(--accent);color:#12131f;transform:rotateX(180deg);font-weight:700}
 .flip .b .new{position:absolute;top:-7px;right:8px;font-size:9px;letter-spacing:.12em;background:var(--accent2);color:#12131f;padding:2px 7px;border-radius:99px;font-weight:800}
-.flip.extra .f{border-style:dashed;opacity:.5;font-style:italic}
+.flip.extra .f{opacity:0;border:0}
 .flip.extra .b{background:var(--accent2)}
 
 /* ---------- 02 quiz ---------- */
@@ -969,18 +969,20 @@ $('#toTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
     ['Üreten Nesiller','Prompt Geliştirme'],
     ['Algoritmik Düşünme','YZ Çıktısını Sorgulama ve Doğrulama'],
     ['Problem Çözme ve Yaratıcılık','İnsan + YZ İş Birliği ile Problem Çözme'],
-    ['—','Yaşa Uygun ve Güvenli YZ Kullanımı',1],
-    ['—','Etik ve Sorumlu YZ Kullanımı',1],
+    ['','Yaşa Uygun ve Güvenli YZ Kullanımı',1],
+    ['','Etik ve Sorumlu YZ Kullanımı',1],
   ];
   const grid=$('#flipGrid'), sl=$('#morph'), yr=$('#morphYear'), cap=$('#morphCap');
   const cards=PAIRS.map(([f,b,x])=>{
     const c=el('div',{class:'flip'+(x?' extra':'')},'<div><div class="f">'+f+'</div><div class="b">'+b+''+'</div></div>');
     grid.appendChild(c);return c;});
   function upd(){
-    const v=+sl.value; yr.textContent=String(2019+Math.round(v/100*8));
-    cards.forEach((c,i)=>c.classList.toggle('on',v>=12+i*9));
+    const v=+sl.value, year=2019+Math.min(8,Math.floor(v/100*8.999));
+    yr.textContent=year>=2027?'2027+':String(year);
+    // kartlar yalnızca 2026 → 2027 geçişinde döner (kaydırıcının son %12'si)
+    cards.forEach((c,i)=>c.classList.toggle('on',v>=88+i*1.4));
     const n=cards.filter(c=>c.classList.contains('on')).length;
-    cap.textContent=n===0?'2019–2026: Kodlama dönemi, 7 başlık, Scratch merkezli.':n<9?'Dönem değişiyor… '+n+' / 9':'2027+: Yapay zekâ dönemi, 9 başlık.';
+    cap.textContent=n===0?'2019–2026: Kodlama dönemi — 7 başlık, Scratch merkezli.':n<9?'2027: dönem değişiyor… '+n+' / 9':'2027+: Yapay zekâ dönemi — 9 başlık.';
   }
   sl.addEventListener('input',upd); upd();
   once(sl,()=>{ if(REDUCED)return; let v=0;const t=setInterval(()=>{v+=2;sl.value=v;upd();if(v>=100)clearInterval(t);},28); sl.addEventListener('pointerdown',()=>clearInterval(t),{once:true}); },.5);

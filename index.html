@@ -172,15 +172,16 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 /* ---------- 01 dönüşüm: flip cards ---------- */
 .flip-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.flip{perspective:900px;height:64px}
+.flip{perspective:900px;height:70px}
 .flip>div{position:relative;width:100%;height:100%;transition:transform .7s var(--ease);transform-style:preserve-3d}
 .flip.on>div{transform:rotateX(180deg)}
 .flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;padding:8px 12px;font-size:12.5px;line-height:1.25;font-weight:500;border:1px solid var(--line)}
-.flip .f{background:color-mix(in srgb,var(--fg) 8%,transparent);color:var(--dim)}
+.flip .f{background:var(--accent2);color:#12131f;font-weight:700;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px}
+.flip .f small{font-size:10px;font-weight:600;letter-spacing:.04em;opacity:.7}
 .flip .b{background:var(--accent);color:#12131f;transform:rotateX(180deg);font-weight:700}
+.era{display:inline-block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--accent2);color:#12131f;transition:.3s}
+.era.ai{background:var(--accent)}
 .flip .b .new{position:absolute;top:-7px;right:8px;font-size:9px;letter-spacing:.12em;background:var(--accent2);color:#12131f;padding:2px 7px;border-radius:99px;font-weight:800}
-.flip.extra .f{opacity:0;border:0}
-.flip.extra .b{background:var(--accent2)}
 
 /* ---------- 02 quiz ---------- */
 .qz{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -321,8 +322,9 @@ footer a:hover{color:#ffcf4a}
   .panel{padding:14px 16px}
   .field{font-size:14px;padding:10px 12px}
   .btn{font-size:11px;padding:8px 14px}
-  .flip{height:56px}
+  .flip{height:62px}
   .flip .f,.flip .b{font-size:11px;padding:6px 9px}
+  .flip .f small{font-size:9px}
   .qz .it .t{font-size:13px}
   .chat{height:130px}
   .rules{max-height:90px}
@@ -371,9 +373,13 @@ footer a:hover{color:#ffcf4a}
       <p class="lbl">Kaydırıcıyı sürükle — 2019'dan 2027'ye</p>
       <input type="range" id="morph" min="0" max="100" value="0" aria-label="Yıl">
       <div class="row" style="justify-content:space-between;margin-top:4px">
-        <span class="mono small">2019–2026 · Kodlama Odaklı</span>
+        <span class="mono small">2019–2026 · Kodlama</span>
         <span class="mono small" id="morphYear" style="color:var(--accent);font-weight:700">2019</span>
-        <span class="mono small">2027+ · Yapay Zekâ Odaklı</span>
+        <span class="mono small">2027+ · Yapay Zekâ</span>
+      </div>
+      <div class="row" style="justify-content:space-between;margin-top:12px;gap:12px">
+        <span class="era" id="morphEra">Kodlama dönemi</span>
+        <span class="small" id="morphYearCap" style="flex:1;text-align:right"></span>
       </div>
       <div class="flip-grid" id="flipGrid"></div>
       <p class="small" id="morphCap" style="margin:14px 0 0;min-height:20px"></p>
@@ -962,27 +968,40 @@ $('#toTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 /* ======== 01 · dönüşüm ======== */
 (function(){
   const PAIRS=[
-    ['Kodlama Becerilerini Geliştirmek','YZ + Kodlama Entegrasyonu'],
-    ['Dijital Beceriler Kazandırmak','Yapay Zekâ Okuryazarlığı'],
-    ['Scratch Temelleri ve İleri Teknikleri','YZ Araçlarını Eğitim Amaçlı Kullanma'],
-    ['Oyunlaştırma ve Hikâyeleştirme','YZ ile Yaratıcı İçerik Üretme'],
-    ['Üreten Nesiller','Prompt Geliştirme'],
-    ['Algoritmik Düşünme','YZ Çıktısını Sorgulama ve Doğrulama'],
-    ['Problem Çözme ve Yaratıcılık','İnsan + YZ İş Birliği ile Problem Çözme'],
-    ['','Yaşa Uygun ve Güvenli YZ Kullanımı',1],
-    ['','Etik ve Sorumlu YZ Kullanımı',1],
+    ['Kodlama Becerilerini Geliştirmek<small>Blok tabanlı kodlama</small>','YZ + Kodlama Entegrasyonu'],
+    ['Dijital Beceriler Kazandırmak<small>Bilgisayar ve internet okuryazarlığı</small>','Yapay Zekâ Okuryazarlığı'],
+    ['Scratch Temelleri ve İleri Teknikleri<small>Scratch 3.0</small>','YZ Araçlarını Eğitim Amaçlı Kullanma'],
+    ['Oyunlaştırma ve Hikâyeleştirme<small>Oyun ve animasyon projeleri</small>','YZ ile Yaratıcı İçerik Üretme'],
+    ['Üreten Nesiller<small>Tüketen değil, yapan çocuk</small>','Prompt Geliştirme'],
+    ['Algoritmik Düşünme<small>Sıralama, döngü, koşul</small>','YZ Çıktısını Sorgulama ve Doğrulama'],
+    ['Problem Çözme ve Yaratıcılık<small>Proje tabanlı öğrenme</small>','İnsan + YZ İş Birliği ile Problem Çözme'],
+    ['Minik Eller Online<small>2020 · uzaktan eğitim dönemi</small>','Yaşa Uygun ve Güvenli YZ Kullanımı',1],
+    ['Eğitim Kılavuzu ve Eğitmen Kiti<small>Scratch 3.0 · standart müfredat</small>','Etik ve Sorumlu YZ Kullanımı',1],
   ];
-  const grid=$('#flipGrid'), sl=$('#morph'), yr=$('#morphYear'), cap=$('#morphCap');
+  const YEARS={
+    2019:'Başlangıç: Scratch ile ilk adımlar, algoritmik düşünme.',
+    2020:'Minik Eller Online: eğitim uzaktan devam etti.',
+    2021:'Eğitim Kılavuzu v1.0 ile ortak müfredat.',
+    2022:'Oyunlaştırma ve hikâyeleştirme atölyeleri.',
+    2023:'Scratch ileri teknikleri; üreten nesiller.',
+    2024:'Scratch 3.0 Eğitmen Kiti.',
+    2025:'Problem çözme ve yaratıcılık projeleri.',
+    2026:'Kodlama döneminin son yılı; yeni döneme hazırlık.',
+    2027:'Yapay zekâ dönemi başlıyor.'
+  };
+  const grid=$('#flipGrid'), sl=$('#morph'), yr=$('#morphYear'), cap=$('#morphCap'), era=$('#morphEra'), ycap=$('#morphYearCap');
   const cards=PAIRS.map(([f,b,x])=>{
     const c=el('div',{class:'flip'+(x?' extra':'')},'<div><div class="f">'+f+'</div><div class="b">'+b+''+'</div></div>');
     grid.appendChild(c);return c;});
   function upd(){
     const v=+sl.value, year=2019+Math.min(8,Math.floor(v/100*8.999));
     yr.textContent=year>=2027?'2027+':String(year);
+    ycap.textContent=YEARS[Math.min(2027,year)];
+    era.textContent=year>=2027?'Yapay zekâ dönemi':'Kodlama dönemi'; era.classList.toggle('ai',year>=2027);
     // kartlar yalnızca 2026 → 2027 geçişinde döner (kaydırıcının son %12'si)
     cards.forEach((c,i)=>c.classList.toggle('on',v>=88+i*1.4));
     const n=cards.filter(c=>c.classList.contains('on')).length;
-    cap.textContent=n===0?'2019–2026: Kodlama dönemi — 7 başlık, Scratch merkezli.':n<9?'2027: dönem değişiyor… '+n+' / 9':'2027+: Yapay zekâ dönemi — 9 başlık.';
+    cap.textContent=n===0?'Yedi yıl, yedi beceri alanı: kodlama dönemi çocuklara üretmeyi öğretti.':n<9?'Dönem değişiyor… '+n+' / 9 başlık yenilendi':'Yapay zekâ dönemi: bu çağın ihtiyacı olan dokuz beceri.';
   }
   sl.addEventListener('input',upd); upd();
   once(sl,()=>{ if(REDUCED)return; let v=0;const t=setInterval(()=>{v+=2;sl.value=v;upd();if(v>=100)clearInterval(t);},28); sl.addEventListener('pointerdown',()=>clearInterval(t),{once:true}); },.5);

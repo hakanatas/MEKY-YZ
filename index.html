@@ -21,6 +21,7 @@
   --ease:cubic-bezier(.22,.61,.36,1);
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{
   margin:0;background:var(--bg);color:var(--fg);
@@ -289,6 +290,16 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
 
 footer{padding:88px clamp(20px,8vw,140px) 66px;border-top:1px solid rgba(243,241,234,.14);background:#12131f;color:#f3f1ea}
+.partners{max-width:1120px;margin:0 auto 56px;padding-bottom:44px;border-bottom:1px solid rgba(243,241,234,.14)}
+.partners .lbl{text-align:center;margin-bottom:22px}
+.partners .logos{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px clamp(28px,6vw,80px)}
+.partners .logo{display:flex;align-items:center;justify-content:center;background:#f3f1ea;border-radius:14px;padding:14px 26px;min-height:78px;min-width:200px}
+.partners .logo img{max-height:46px;max-width:220px;width:auto;height:auto;display:block}
+.partners .logo .mark{position:static;opacity:1;font-size:26px;letter-spacing:-.03em;line-height:1;pointer-events:auto;font-family:"Plus Jakarta Sans",sans-serif;font-weight:800}
+.partners .logo .mark.qnb{color:#5e2d91}
+.partners .logo .mark.hab{color:#1e6a5a;font-size:22px}
+.partners .logo .mark small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.6;margin-top:4px}
+.partners p.small{text-align:center;margin:18px auto 0;max-width:60ch}
 footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:34px;max-width:1120px;margin:0 auto}
 footer h4{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;text-transform:uppercase;font-size:12.5px;letter-spacing:.1em;margin:0 0 12px;color:#ffcf4a}
 footer p,footer li{font-size:14px;color:rgba(243,241,234,.6);margin:0 0 8px}
@@ -827,10 +838,23 @@ footer a:hover{color:#ffcf4a}
 </section>
 
 <footer>
+  <div class="partners">
+    <p class="lbl">Bu proje QNB ve Habitat Derneği iş birliğiyle hayata geçiyor</p>
+    <div class="logos">
+      <a class="logo" href="https://www.qnb.com.tr" target="_blank" rel="noopener" aria-label="QNB">
+        <img src="assets/qnb-logo.png" alt="QNB" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+        <span class="mark qnb" hidden>QNB</span>
+      </a>
+      <a class="logo" href="https://habitatdernegi.org" target="_blank" rel="noopener" aria-label="Habitat Derneği">
+        <img src="assets/habitat-logo.png" alt="Habitat Derneği" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+        <span class="mark hab" hidden>Habitat<small>Derneği</small></span>
+      </a>
+    </div>
+  </div>
   <div class="cols">
     <div>
       <h4>Gençler YZ Öğreniyor</h4>
-      <p>Minik Eller Kod Yazıyor projesinin (2019–2026) yeni dönemi. Ortaokul öğrencileri için yapay zekâ okuryazarlığı, güvenli ve etik kullanım, yaratıcılık ve kodlama entegrasyonu.</p>
+      <p>Minik Eller Kod Yazıyor projesinin (2019–2026) yeni dönemi. QNB ve Habitat Derneği iş birliğiyle; ortaokul öğrencileri için yapay zekâ okuryazarlığı, güvenli ve etik kullanım, yaratıcılık ve kodlama entegrasyonu.</p>
       <p style="font-size:12px">Bu sayfa bir sunum taslağıdır; içerik öğretmen ve veli geri bildirimiyle geliştirilecektir.</p>
     </div>
     <div>
